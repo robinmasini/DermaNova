@@ -186,21 +186,20 @@ ${pdfContext}
 
 Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure. 
 ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS renvoyer une valeur très courte (ex: "45%", "5.5", "Moyenne", "30%"). Même si c'est difficile à évaluer sur photo, fais une déduction clinique experte et donne TOUJOURS une valeur estimée réaliste. Ne dis JAMAIS que c'est non mesurable ou "N/A". Ne mets JAMAIS de longues phrases dans ces champs.
-En revanche, pour éviter les gros blocs de texte indigestes, structure tes réponses pour 'agingDetails', 'diagnosis' et 'treatments' sous forme de listes d'objets avec un 'title' (titre clair et concis) et une 'description' (explication détaillée) :
 {
   "hydration": "Valeur courte estimée (ex: 45%)",
   "ph": "Valeur courte estimée (ex: 5.5)",
   "elasticity": "Valeur courte estimée (ex: Bonne)",
   "aging": "Valeur courte (ex: 30%)",
   "agingDetails": [
-    { "title": "Nom du signe (ex: Rides d'expression)", "description": "Explication détaillée" }
+    { "title": "Nom du signe", "description": "Explication hyper détaillée, très longue et exhaustive de la physiopathologie et des observations." }
   ],
   "diagnosis": [
-    { "title": "Titre du constat (ex: Étiologie suspectée)", "description": "Explication argumentée" }
+    { "title": "Titre du constat", "description": "Développement clinique très long et argumenté." }
   ],
-  "recommendation": "Recommandation générale (texte simple de 2 lignes max)",
+  "recommendation": "Recommandation générale détaillée",
   "treatments": [
-    { "title": "Nom du protocole (ex: Peeling Acide Glycolique)", "description": "Justification et posologie" }
+    { "title": "Nom du protocole", "description": "Protocole extrêmement précis, très long, détaillant la posologie, le mécanisme d'action et les étapes." }
   ]
 }`;
 
@@ -485,15 +484,30 @@ En revanche, pour éviter les gros blocs de texte indigestes, structure tes rép
               
               {selectedPatient.history && selectedPatient.history.length > 0 && (
                 <div className="patient-history">
-                  <h3 style={{marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px'}}>Historique des Diagnostics</h3>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                  <h3 style={{marginBottom: '1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px'}}>Dossier Médical & Photos</h3>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem'}}>
                     {selectedPatient.history.map((h, i) => (
-                      <div key={i} style={{background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)'}}>
-                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
-                          <span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{h.date}</span>
+                      <div key={i} style={{background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--glass-border)'}}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem'}}>
+                          <span style={{fontSize: '0.9rem', color: 'var(--text-muted)'}}>Consultation du {h.date}</span>
                         </div>
-                        <p style={{fontSize: '0.95rem', lineHeight: '1.4', marginBottom: '0.5rem'}}>{h.diagnosis}</p>
-                        {h.image && <img src={h.image} alt="Historique" style={{width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', marginTop: '0.5rem'}}/>}
+                        
+                        <div style={{display: 'flex', gap: '1.5rem', alignItems: 'flex-start'}}>
+                          {h.image && (
+                            <div style={{flexShrink: 0, width: '150px', height: '150px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.2)'}}>
+                              <img src={h.image} alt="Photo patient" style={{width: '100%', height: '100%', objectFit: 'cover'}}/>
+                            </div>
+                          )}
+                          <div style={{flex: 1}}>
+                            <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Bilan</h4>
+                            <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
+                              {Array.isArray(h.diagnosis) 
+                                ? h.diagnosis.map((d, dIdx) => <div key={dIdx}><strong>{d.title}:</strong> {d.description}</div>)
+                                : <p>{h.diagnosis}</p>
+                              }
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
