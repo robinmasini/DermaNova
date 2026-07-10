@@ -263,6 +263,25 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
+.modal-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #121212;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.modal-select:focus {
+  border-color: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.9);
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -1083,6 +1102,36 @@
   flex-shrink: 0;
 }
 
+.patient-search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.patient-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.patient-search-input:focus {
+  border-color: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.patient-scroll-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
 .patient-info-row {
   display: flex;
   flex-direction: column;
@@ -1129,6 +1178,34 @@
 
 .patient-list-item:hover .view-btn-icon {
   color: var(--accent-cyan);
+}
+
+.delete-patient-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s;
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.delete-patient-btn:hover {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.modal-select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
 }
 
 /* PDF Knowledge */

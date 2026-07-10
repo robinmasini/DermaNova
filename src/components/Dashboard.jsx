@@ -25,6 +25,7 @@ export default function Dashboard({ onLogout }) {
     ];
   });
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [pdfs, setPdfs] = useState(() => {
     const saved = localStorage.getItem('dermaNovaPdfs');
@@ -165,6 +166,46 @@ export default function Dashboard({ onLogout }) {
     
     setIsNewPatientModalOpen(false);
     setNewPatientData({ name: '', age: '', email: '', phone: '' });
+  };
+
+  const handleSaveToExistingPatient = (patientIdStr) => {
+    const patientId = parseInt(patientIdStr);
+    const patientIndex = patients.findIndex(p => p.id === patientId);
+    if (patientIndex === -1) return;
+    
+    const patient = patients[patientIndex];
+    const newHistoryEntry = {
+      date: new Date().toLocaleDateString(),
+      image: selectedImage?.url,
+      diagnosis: analysisResult.diagnosis,
+      recommendation: analysisResult.recommendation
+    };
+    
+    const updatedPatient = {
+      ...patient,
+      date: "À l'instant",
+      history: [newHistoryEntry, ...(patient.history || [])]
+    };
+    
+    const updatedPatients = [...patients];
+    updatedPatients[patientIndex] = updatedPatient;
+    
+    setPatients(updatedPatients);
+    
+    setSelectedImage(null);
+    setAnalysisResult(null);
+    alert(`Analyse ajoutée au dossier de ${patient.name} !`);
+    setActiveTab('patients');
+    setSelectedPatient(updatedPatient);
+    setIsNewPatientModalOpen(false);
+  };
+
+  const handleDeletePatient = (id) => {
+    if (window.confirm('Voulez-vous vraiment supprimer ce patient de votre base ?')) {
+      const updated = patients.filter(p => p.id !== id);
+      setPatients(updated);
+      if (selectedPatient?.id === id) setSelectedPatient(null);
+    }
   };
 
   const startAnalysis = async () => {
@@ -390,7 +431,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
                 <div className="tab-content animate-fade-in">
                   <div className="ai-diagnosis">
                     <h4>RECOMMANDATION GLOBALE</h4>
-                    <p>{analysisResult.recommendation}</p>
+                    <p>{renderTextWithBold(analysisResult.recommendation)}</p>
                   </div>
                   <div className="treatment-details">
                     <h4>PROTOCOLES CLINIQUES</h4>
@@ -409,7 +450,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
                     style={{marginTop: '1rem', background: 'transparent', border: '1px solid #ffffff', color: '#ffffff'}} 
                     onClick={() => setIsNewPatientModalOpen(true)}
                   >
-                    CRÉER FICHE PATIENT ET SAUVEGARDER
+                    SAUVEGARDER L'ANALYSE DANS UN DOSSIER PATIENT
                   </button>
                 </div>
               )}
@@ -443,31 +484,49 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
       <div className="card-header patients">
         <div className="title-area">
           <h2>LISTE DES <span className="brand-light">PATIENTS</span></h2>
-          <p className="card-description">
-            Sélectionnez un patient pour accéder à son dossier complet et ses analyses.
-          </p>
+  const renderPatientsList = () => {
+    const filteredPatients = patients.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return (
+    <div className="patients-tab animate-fade-in">
+      <div className="tab-header">
+        <div>
+          <h2>Base Patients</h2>
+          <p>Gérez vos dossiers médicaux</p>
         </div>
-        <button className="premium-btn-small outline" onClick={() => setIsNewPatientModalOpen(true)}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', verticalAlign: 'middle'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Nouveau Patient
+        <button className="start-analysis-btn" style={{width: 'auto', padding: '0.8rem 1.5rem'}} onClick={() => setIsNewPatientModalOpen(true)}>
+          + Nouveau Patient
         </button>
       </div>
       
       <div className="patients-layout">
         <div className="patient-list-column glass-panel" style={{padding: '1.5rem'}}>
-          {patients.map(patient => (
-            <div key={patient.id} className={`patient-list-item ${selectedPatient?.id === patient.id ? 'active' : ''}`} onClick={() => setSelectedPatient(patient)}>
-              <div className="patient-avatar-small">{patient.initial}</div>
-              <div className="patient-info-row">
-                <h3>{patient.name}</h3>
-                <span className="patient-age">{patient.age} ans</span>
+          <input 
+            type="text" 
+            placeholder="Rechercher un patient..." 
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="patient-search-input"
+          />
+          <div className="patient-scroll-area">
+            {filteredPatients.map(patient => (
+              <div key={patient.id} className={`patient-list-item ${selectedPatient?.id === patient.id ? 'active' : ''}`} onClick={() => setSelectedPatient(patient)}>
+                <div className="patient-avatar-small">{patient.initial}</div>
+                <div className="patient-info-row">
+                  <h3>{patient.name}</h3>
+                  <span className="patient-age">{patient.age} ans</span>
+                </div>
+                <div className="patient-date">{patient.date}</div>
+                <span className={`status-badge ${patient.statusClass}`}>{patient.status}</span>
+                <button 
+                  className="delete-patient-btn" 
+                  onClick={(e) => { e.stopPropagation(); handleDeletePatient(patient.id); }}
+                  title="Supprimer le patient"
+                >✕</button>
               </div>
-              <div className="patient-date">{patient.date}</div>
-              <span className={`status-badge ${patient.statusClass}`}>{patient.status}</span>
-              <button className="view-btn-icon">➔</button>
-            </div>
-          ))}
-          {patients.length === 0 && <p style={{opacity: 0.5, textAlign: 'center'}}>Aucun patient enregistré.</p>}
+            ))}
+            {filteredPatients.length === 0 && <p style={{opacity: 0.5, textAlign: 'center', marginTop: '2rem'}}>Aucun patient trouvé.</p>}
+          </div>
         </div>
 
         <div className="patient-profile-column">
@@ -539,7 +598,8 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const renderPdfKnowledge = () => (
     <div className="content-card animate-fade-in">
@@ -722,8 +782,26 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
       {isNewPatientModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Nouveau Patient</h3>
-            <form className="modal-form" onSubmit={handleAddPatient}>
+            <h3>Sauvegarder le dossier</h3>
+            
+            {analysisResult && patients.length > 0 && (
+              <div style={{marginBottom: '2rem', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '1.5rem'}}>
+                <h4 style={{color: '#121212', marginBottom: '0.8rem', fontSize: '1rem'}}>Ajouter à un patient existant :</h4>
+                <select 
+                  className="modal-select"
+                  onChange={(e) => handleSaveToExistingPatient(e.target.value)}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Sélectionnez un patient...</option>
+                  {patients.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+            )}
+            
+            <h4 style={{color: '#121212', marginBottom: '0.8rem', fontSize: '1rem'}}>
+              {analysisResult ? 'Ou créer un nouveau patient :' : 'Créer un nouveau patient :'}
+            </h4>
+            <form onSubmit={handleAddPatient} className="modal-form">
               <input 
                 type="text" 
                 placeholder="Nom complet (ex: Jean Dupont)" 
