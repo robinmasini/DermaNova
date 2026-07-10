@@ -60,13 +60,28 @@ export default function Dashboard({ onLogout }) {
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedImage({
-        url: URL.createObjectURL(file),
-        name: file.name,
-        size: file.size
-      });
-      setAnalysisResult(null);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage({
+          url: reader.result,
+          name: file.name,
+          size: file.size
+        });
+        setAnalysisResult(null);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const renderTextWithBold = (text) => {
+    if (!text) return null;
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={index} style={{color: '#fff'}}>{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
   };
 
   const extractTextFromPDF = async (file) => {
@@ -186,6 +201,8 @@ ${pdfContext}
 
 Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure. 
 ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS renvoyer une valeur très courte (ex: "45%", "5.5", "Moyenne", "30%"). Même si c'est difficile à évaluer sur photo, fais une déduction clinique experte et donne TOUJOURS une valeur estimée réaliste. Ne dis JAMAIS que c'est non mesurable ou "N/A". Ne mets JAMAIS de longues phrases dans ces champs.
+En revanche, pour éviter les gros blocs de texte indigestes, structure tes réponses pour 'agingDetails', 'diagnosis' et 'treatments' sous forme de listes d'objets avec un 'title' (titre clair et concis) et une 'description' (explication détaillée). 
+CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entourant de doubles astérisques **) pour mettre en valeur les mots-clés, les symptômes et les molécules, afin de faciliter la lecture en diagonale !
 {
   "hydration": "Valeur courte estimée (ex: 45%)",
   "ph": "Valeur courte estimée (ex: 5.5)",
@@ -349,9 +366,9 @@ ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS r
                       {Array.isArray(analysisResult.agingDetails) ? analysisResult.agingDetails.map((item, idx) => (
                         <div key={idx} className="structured-item">
                           <span className="structured-title">{item.title}</span>
-                          <p>{item.description}</p>
+                          <p>{renderTextWithBold(item.description)}</p>
                         </div>
-                      )) : <p className="aging-details">{analysisResult.agingDetails}</p>}
+                      )) : <p className="aging-details">{renderTextWithBold(analysisResult.agingDetails)}</p>}
                     </div>
                   </div>
 
@@ -361,9 +378,9 @@ ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS r
                       {Array.isArray(analysisResult.diagnosis) ? analysisResult.diagnosis.map((item, idx) => (
                         <div key={idx} className="structured-item">
                           <span className="structured-title">{item.title}</span>
-                          <p>{item.description}</p>
+                          <p>{renderTextWithBold(item.description)}</p>
                         </div>
-                      )) : <p>{analysisResult.diagnosis}</p>}
+                      )) : <p>{renderTextWithBold(analysisResult.diagnosis)}</p>}
                     </div>
                   </div>
                 </div>
@@ -381,9 +398,9 @@ ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS r
                       {Array.isArray(analysisResult.treatments) ? analysisResult.treatments.map((item, idx) => (
                         <div key={idx} className="structured-item">
                           <span className="structured-title">{item.title || item}</span>
-                          {item.description && <p>{item.description}</p>}
+                          {item.description && <p>{renderTextWithBold(item.description)}</p>}
                         </div>
-                      )) : <ul>{analysisResult.treatments.map((t, idx) => <li key={idx}>{t}</li>)}</ul>}
+                      )) : <ul>{analysisResult.treatments.map((t, idx) => <li key={idx}>{renderTextWithBold(t)}</li>)}</ul>}
                     </div>
                   </div>
                   
@@ -502,8 +519,8 @@ ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS r
                             <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Bilan</h4>
                             <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
                               {Array.isArray(h.diagnosis) 
-                                ? h.diagnosis.map((d, dIdx) => <div key={dIdx}><strong>{d.title}:</strong> {d.description}</div>)
-                                : <p>{h.diagnosis}</p>
+                                ? h.diagnosis.map((d, dIdx) => <div key={dIdx}><strong>{d.title}:</strong> {renderTextWithBold(d.description)}</div>)
+                                : <p>{renderTextWithBold(h.diagnosis)}</p>
                               }
                             </div>
                           </div>

@@ -244,16 +244,23 @@
 }
 
 .modal-form input {
-  border: 1px solid var(--glass-border);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #121212;
   padding: 0.8rem 1rem;
   border-radius: 12px;
+  font-size: 0.95rem;
   outline: none;
-  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.modal-form input::placeholder {
+  color: #666;
 }
 
 .modal-form input:focus {
   border-color: var(--accent-cyan);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .modal-actions {
