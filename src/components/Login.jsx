@@ -6,10 +6,16 @@ import backgroundVideo from '../assets/background.mp4';
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin();
+    if (username === 'contact@casperdental.com' && password === 'Casper1234') {
+      setError('');
+      onLogin();
+    } else {
+      setError('Identifiant ou mot de passe incorrect.');
+    }
   };
 
   return (
@@ -48,6 +54,8 @@ export default function Login({ onLogin }) {
               required 
             />
           </div>
+          
+          {error && <div className="error-message">{error}</div>}
           
           <button type="submit" className="login-button">
             Connexion

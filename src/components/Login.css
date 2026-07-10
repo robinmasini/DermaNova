@@ -78,6 +78,15 @@
   color: var(--text-muted);
 }
 
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
 .login-button {
   margin-top: 1rem;
   padding: 1.2rem;
