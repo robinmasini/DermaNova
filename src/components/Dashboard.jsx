@@ -21,9 +21,10 @@ export default function Dashboard({ onLogout }) {
     const saved = localStorage.getItem('dermaNovaPatients');
     if (saved) return JSON.parse(saved);
     return [
-      { id: 1, initial: 'J', name: 'Juliette R.', age: 19, date: "Aujourd'hui", status: 'En amélioration', statusClass: 'improving' }
+      { id: 1, initial: 'J', name: 'Juliette R.', age: 19, email: 'juliette.r@example.com', phone: '06 12 34 56 78', date: "Aujourd'hui", status: 'En amélioration', statusClass: 'improving', history: [] }
     ];
   });
+  const [selectedPatient, setSelectedPatient] = useState(null);
   
   const [pdfs, setPdfs] = useState(() => {
     const saved = localStorage.getItem('dermaNovaPdfs');
@@ -35,7 +36,7 @@ export default function Dashboard({ onLogout }) {
   const [isKeySaved, setIsKeySaved] = useState(!!localStorage.getItem('dermaNovaGeminiKey'));
 
   const [isNewPatientModalOpen, setIsNewPatientModalOpen] = useState(false);
-  const [newPatientData, setNewPatientData] = useState({ name: '', age: '' });
+  const [newPatientData, setNewPatientData] = useState({ name: '', age: '', email: '', phone: '' });
 
   const [isPdfUploading, setIsPdfUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -115,19 +116,40 @@ export default function Dashboard({ onLogout }) {
     e.preventDefault();
     if (!newPatientData.name) return;
     
+    const newHistory = analysisResult ? [{
+      date: new Date().toLocaleDateString(),
+      image: selectedImage?.url,
+      diagnosis: analysisResult.diagnosis,
+      recommendation: analysisResult.recommendation
+    }] : [];
+
     const newPatient = {
       id: Date.now(),
       initial: newPatientData.name.charAt(0).toUpperCase(),
       name: newPatientData.name,
       age: newPatientData.age || 0,
+      email: newPatientData.email || 'Non renseigné',
+      phone: newPatientData.phone || 'Non renseigné',
       date: "À l'instant",
       status: "Nouveau dossier",
-      statusClass: "stable"
+      statusClass: "stable",
+      history: newHistory
     };
     
-    setPatients([newPatient, ...patients]);
+    const updatedPatients = [newPatient, ...patients];
+    setPatients(updatedPatients);
+    
+    // Si on a sauvegardé une analyse en cours, on l'attache et on vide le dashboard
+    if (analysisResult) {
+      setSelectedImage(null);
+      setAnalysisResult(null);
+      alert('Analyse sauvegardée dans la nouvelle fiche patient !');
+      setActiveTab('patients');
+      setSelectedPatient(newPatient);
+    }
+    
     setIsNewPatientModalOpen(false);
-    setNewPatientData({ name: '', age: '' });
+    setNewPatientData({ name: '', age: '', email: '', phone: '' });
   };
 
   const startAnalysis = async () => {
@@ -338,6 +360,14 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure
                       {analysisResult.treatments.map((t, idx) => <li key={idx}>{t}</li>)}
                     </ul>
                   </div>
+                  
+                  <button 
+                    className="start-analysis-btn" 
+                    style={{marginTop: '1rem', background: 'transparent', border: '1px solid #ffffff', color: '#ffffff'}} 
+                    onClick={() => setIsNewPatientModalOpen(true)}
+                  >
+                    CRÉER FICHE PATIENT ET SAUVEGARDER
+                  </button>
                 </div>
               )}
             </div>
@@ -380,20 +410,75 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure
         </button>
       </div>
       
-      <div className="patients-list glass-panel" style={{padding: '1.5rem'}}>
-        {patients.map(patient => (
-          <div key={patient.id} className="patient-list-item">
-            <div className="patient-avatar-small">{patient.initial}</div>
-            <div className="patient-info-row">
-              <h3>{patient.name}</h3>
-              <span className="patient-age">{patient.age} ans</span>
+      <div className="patients-layout">
+        <div className="patient-list-column glass-panel" style={{padding: '1.5rem'}}>
+          {patients.map(patient => (
+            <div key={patient.id} className={`patient-list-item ${selectedPatient?.id === patient.id ? 'active' : ''}`} onClick={() => setSelectedPatient(patient)}>
+              <div className="patient-avatar-small">{patient.initial}</div>
+              <div className="patient-info-row">
+                <h3>{patient.name}</h3>
+                <span className="patient-age">{patient.age} ans</span>
+              </div>
+              <div className="patient-date">{patient.date}</div>
+              <span className={`status-badge ${patient.statusClass}`}>{patient.status}</span>
+              <button className="view-btn-icon">➔</button>
             </div>
-            <div className="patient-date">{patient.date}</div>
-            <span className={`status-badge ${patient.statusClass}`}>{patient.status}</span>
-            <button className="view-btn-icon">➔</button>
-          </div>
-        ))}
-        {patients.length === 0 && <p style={{opacity: 0.5, textAlign: 'center'}}>Aucun patient enregistré.</p>}
+          ))}
+          {patients.length === 0 && <p style={{opacity: 0.5, textAlign: 'center'}}>Aucun patient enregistré.</p>}
+        </div>
+
+        <div className="patient-profile-column">
+          {selectedPatient ? (
+            <>
+              <div className="patient-profile-header">
+                <div className="patient-profile-avatar">{selectedPatient.initial}</div>
+                <div>
+                  <h2 style={{fontSize: '1.8rem', marginBottom: '0.5rem'}}>{selectedPatient.name}</h2>
+                  <span className={`status-badge ${selectedPatient.statusClass}`}>{selectedPatient.status}</span>
+                </div>
+              </div>
+              <div className="patient-profile-details">
+                <div className="profile-field">
+                  <label>Âge</label>
+                  <span>{selectedPatient.age} ans</span>
+                </div>
+                <div className="profile-field">
+                  <label>Dernière visite</label>
+                  <span>{selectedPatient.date}</span>
+                </div>
+                <div className="profile-field">
+                  <label>Email</label>
+                  <span>{selectedPatient.email}</span>
+                </div>
+                <div className="profile-field">
+                  <label>Téléphone</label>
+                  <span>{selectedPatient.phone}</span>
+                </div>
+              </div>
+              
+              {selectedPatient.history && selectedPatient.history.length > 0 && (
+                <div className="patient-history">
+                  <h3 style={{marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px'}}>Historique des Diagnostics</h3>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                    {selectedPatient.history.map((h, i) => (
+                      <div key={i} style={{background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)'}}>
+                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
+                          <span style={{fontSize: '0.85rem', color: 'var(--text-muted)'}}>{h.date}</span>
+                        </div>
+                        <p style={{fontSize: '0.95rem', lineHeight: '1.4', marginBottom: '0.5rem'}}>{h.diagnosis}</p>
+                        {h.image && <img src={h.image} alt="Historique" style={{width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', marginTop: '0.5rem'}}/>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div style={{display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textAlign: 'center'}}>
+              <p>Sélectionnez un patient à gauche pour afficher sa fiche détaillée.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -593,6 +678,18 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure
                 value={newPatientData.age}
                 onChange={e => setNewPatientData({...newPatientData, age: e.target.value})}
                 required
+              />
+              <input 
+                type="email" 
+                placeholder="Adresse Email" 
+                value={newPatientData.email}
+                onChange={e => setNewPatientData({...newPatientData, email: e.target.value})}
+              />
+              <input 
+                type="tel" 
+                placeholder="Téléphone" 
+                value={newPatientData.phone}
+                onChange={e => setNewPatientData({...newPatientData, phone: e.target.value})}
               />
               <div className="modal-actions">
                 <button type="button" className="btn-cancel" onClick={() => setIsNewPatientModalOpen(false)}>Annuler</button>
