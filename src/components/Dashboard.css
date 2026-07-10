@@ -175,14 +175,15 @@
 }
 
 .card-header h2 {
-  font-size: 2.2rem;
+  font-size: 1.4rem; /* Smaller, more refined */
   letter-spacing: 2px;
 }
 
 .card-description {
   color: var(--text-muted);
   line-height: 1.6;
-  font-size: 1.1rem;
+  font-size: 0.9rem; /* Smaller and delicate */
+  opacity: 0.85;
 }
 
 /* Scanner Body Grid (3 Columns) */
