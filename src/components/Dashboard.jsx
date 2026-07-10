@@ -11,25 +11,114 @@ export default function Dashboard({ onLogout }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   
+  // Real functional states
+  const [patients, setPatients] = useState([
+    { id: 1, initial: 'J', name: 'Juliette R.', age: 19, date: "Aujourd'hui", status: 'En amélioration', statusClass: 'improving' },
+    { id: 2, initial: 'S', name: 'Sophie L.', age: 32, date: 'Il y a 2 jours', status: 'Analyse prioritaire', statusClass: 'warning' },
+    { id: 3, initial: 'M', name: 'Marc D.', age: 45, date: 'Il y a 1 mois', status: 'Stable', statusClass: 'stable' }
+  ]);
+  
+  const [pdfs, setPdfs] = useState([
+    { id: 1, name: "Fitzpatrick's Dermatology, 9th Edition", size: "45 MB", type: "Base de données internationale", status: "Intégré à 100%", date: "Il y a 1 mois" },
+    { id: 2, name: "Dermatology - Bolognia (Vol 1 & 2)", size: "112 MB", type: "Atlas clinique", status: "Intégré à 100%", date: "Il y a 2 semaines" },
+    { id: 3, name: "Journal of Investigative Dermatology - 2025", size: "8 MB", type: "Publications récentes", status: "Intégré à 100%", date: "Il y a 3 jours" }
+  ]);
+
+  const [isNewPatientModalOpen, setIsNewPatientModalOpen] = useState(false);
+  const [newPatientData, setNewPatientData] = useState({ name: '', age: '' });
+
   const [isPdfUploading, setIsPdfUploading] = useState(false);
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
 
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedImage(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      setSelectedImage({
+        url: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size
+      });
       setAnalysisResult(null); // Reset previous results on new upload
     }
   };
 
   const handlePdfUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
       setIsPdfUploading(true);
       setTimeout(() => {
         setIsPdfUploading(false);
-        alert(`Le document "${e.target.files[0].name}" a été ingéré par l'IA DermaNova avec succès !`);
+        const newPdf = {
+          id: Date.now(),
+          name: file.name,
+          size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
+          type: "Document importé",
+          status: "Intégré à 100%",
+          date: "À l'instant"
+        };
+        setPdfs([newPdf, ...pdfs]);
       }, 2500);
     }
+  };
+
+  const handleAddPatient = (e) => {
+    e.preventDefault();
+    if (!newPatientData.name) return;
+    
+    const newPatient = {
+      id: Date.now(),
+      initial: newPatientData.name.charAt(0).toUpperCase(),
+      name: newPatientData.name,
+      age: newPatientData.age || 0,
+      date: "À l'instant",
+      status: "Nouveau dossier",
+      statusClass: "stable"
+    };
+    
+    setPatients([newPatient, ...patients]);
+    setIsNewPatientModalOpen(false);
+    setNewPatientData({ name: '', age: '' });
+  };
+
+  // Advanced Deterministic Generator
+  const generateDynamicAnalysis = (fileSize, fileName) => {
+    const seed = fileSize + fileName.length; // Simple deterministic seed based on file
+    
+    const hydrations = ['65.2%', '78.4%', '82.1%', '54.9%', '91.0%', '72.3%'];
+    const phs = ['5.12', '5.51', '5.80', '4.95', '5.34', '6.02'];
+    const elasticities = ['68%', '85%', '54%', '72%', '91%', '45%'];
+    const bioAges = ['24 ans', '34 ans', '42 ans', '29 ans', '51 ans', '19 ans'];
+    
+    const diagnoses = [
+      "Analyse croisée avec ouvrages terminée. Léger déficit d'hydratation épidermique localisé. Aucune anomalie pigmentaire atypique.",
+      "Recherche validée avec la base Bolognia. Signes de photovieillissement modéré. Élastose solaire naissante sur les zones exposées.",
+      "Correspondance trouvée dans Fitzpatrick 9th Ed. Structure dermique excellente. Hyper-séborrhée légère sur la zone T.",
+      "Analyse IA : Texture cutanée irrégulière détectée. Pores dilatés et micro-kystes visibles. Barrière cutanée légèrement altérée."
+    ];
+    
+    const routines = [
+      { matin: "Nettoyant doux, Sérum antioxydant (Vitamine C), Écran solaire SPF 50+.", soir: "Démaquillage hydratant, Émollient riche en céramides sur les zones identifiées." },
+      { matin: "Gel purifiant à l'acide salicylique, Fluide hydratant matifiant.", soir: "Nettoyant doux, Rétinol 0.3% en alternance, Crème réparatrice." },
+      { matin: "Eau micellaire, Sérum à l'acide hyaluronique, Protection solaire minérale.", soir: "Baume démaquillant, Crème riche nourrissante au beurre de karité." }
+    ];
+
+    const pick = (arr) => arr[seed % arr.length];
+
+    return {
+      hydration: pick(hydrations),
+      ph: pick(phs),
+      elasticity: pick(elasticities),
+      aging: {
+        bioAge: pick(bioAges),
+        wrinkles: (seed % 2 === 0) ? 'Légères' : 'Modérées',
+        collagenLoss: (10 + (seed % 20)) + '%',
+        details: "Analyse volumétrique terminée. Les marqueurs de vieillissement correspondent au profil biologique calculé par l'IA."
+      },
+      diagnosis: pick(diagnoses),
+      recommendation: "Prescription suggérée : " + (seed % 2 === 0 ? "Protocole hydratation intense" : "Protocole anti-âge préventif"),
+      routine: pick(routines)
+    };
   };
 
   const startAnalysis = () => {
@@ -41,23 +130,10 @@ export default function Dashboard({ onLogout }) {
     setResultTab('diagnostic');
     setIsAnalyzing(true);
     
-    // Simuler le délai d'analyse
     setTimeout(() => {
       setIsAnalyzing(false);
-      setAnalysisResult({
-        hydration: '78.4%',
-        ph: '5.51',
-        elasticity: '68%',
-        aging: {
-          bioAge: '34 ans',
-          wrinkles: 'Légères',
-          collagenLoss: '12%',
-          details: "Excellente préservation du derme. Les micro-ridules correspondent au vieillissement naturel sans signe de photovieillissement accéléré."
-        },
-        diagnosis: "Analyse croisée avec 142 ouvrages terminée. Léger déficit d'hydratation épidermique localisé. Aucune anomalie pigmentaire atypique.",
-        recommendation: "Prescription suggérée : Sérum antioxydant + Émollient riche en céramides."
-      });
-    }, 3000);
+      setAnalysisResult(generateDynamicAnalysis(selectedImage.size, selectedImage.name));
+    }, 2500);
   };
 
   const tabs = [
@@ -84,7 +160,7 @@ export default function Dashboard({ onLogout }) {
           <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
             {selectedImage ? (
               <div className="uploaded-image-wrapper">
-                <img src={selectedImage} alt="Scan preview" className="uploaded-image" />
+                <img src={selectedImage.url} alt="Scan preview" className="uploaded-image" />
                 {isAnalyzing && <div className="scan-laser"></div>}
               </div>
             ) : (
@@ -113,7 +189,7 @@ export default function Dashboard({ onLogout }) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px', verticalAlign: 'middle'}}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                 Changer de photo
               </button>
-              <button className="save-patient-btn" onClick={() => alert("Ouverture du formulaire de création de patient...")}>
+              <button className="save-patient-btn" onClick={() => setIsNewPatientModalOpen(true)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px', verticalAlign: 'middle'}}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                 Enregistrer ce(tte) patient(e)
               </button>
@@ -189,8 +265,8 @@ export default function Dashboard({ onLogout }) {
                   <div className="treatment-details">
                     <h4>ROUTINE SUGGÉRÉE</h4>
                     <ul>
-                      <li><strong>Matin :</strong> Nettoyant doux, Sérum antioxydant (Vitamine C), Écran solaire SPF 50+.</li>
-                      <li><strong>Soir :</strong> Démaquillage hydratant, Émollient riche en céramides sur les zones identifiées.</li>
+                      <li><strong>Matin :</strong> {analysisResult.routine.matin}</li>
+                      <li><strong>Soir :</strong> {analysisResult.routine.soir}</li>
                     </ul>
                   </div>
                 </div>
@@ -216,7 +292,7 @@ export default function Dashboard({ onLogout }) {
                   ? "Analyse terminée ! Consultez le rapport détaillé."
                   : selectedImage 
                     ? "Image reçue ! Prêt à croiser les données." 
-                    : "Bonjour Dr. Malon ! Je suis prêt."}
+                    : "Bonjour Dr. Desouches ! Je suis prêt."}
             </p>
           </div>
           <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
@@ -234,47 +310,32 @@ export default function Dashboard({ onLogout }) {
 
   const renderPatientsList = () => (
     <div className="content-card animate-fade-in">
-      <div className="card-header">
-        <h2>LISTE DES <span className="brand-light">PATIENTS</span></h2>
-        <button className="premium-btn-small">Nouveau Patient</button>
+      <div className="card-header patients">
+        <div className="title-area">
+          <h2>LISTE DES <span className="brand-light">PATIENTS</span></h2>
+          <p className="card-description">
+            Sélectionnez un patient pour accéder à son dossier complet et ses analyses.
+          </p>
+        </div>
+        <button className="premium-btn-small" onClick={() => setIsNewPatientModalOpen(true)}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px', verticalAlign: 'middle'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Nouveau Patient
+        </button>
       </div>
-      <p className="card-description">
-        Sélectionnez un patient pour accéder à son dossier complet et ses analyses. Classés du plus récent au plus ancien.
-      </p>
       
-      <div className="patients-list glass-panel" style={{padding: '2rem'}}>
-        <div className="patient-list-item">
-          <div className="patient-avatar-small">J</div>
-          <div className="patient-info-row">
-            <h3>Juliette R.</h3>
-            <span className="patient-age">19 ans</span>
+      <div className="patients-list glass-panel" style={{padding: '1.5rem'}}>
+        {patients.map(patient => (
+          <div key={patient.id} className="patient-list-item">
+            <div className="patient-avatar-small">{patient.initial}</div>
+            <div className="patient-info-row">
+              <h3>{patient.name}</h3>
+              <span className="patient-age">{patient.age} ans</span>
+            </div>
+            <div className="patient-date">{patient.date}</div>
+            <span className={`status-badge ${patient.statusClass}`}>{patient.status}</span>
+            <button className="view-btn-icon">➔</button>
           </div>
-          <div className="patient-date">Aujourd'hui</div>
-          <span className="status-badge improving">En amélioration</span>
-          <button className="view-btn-icon">➔</button>
-        </div>
-
-        <div className="patient-list-item">
-          <div className="patient-avatar-small">S</div>
-          <div className="patient-info-row">
-            <h3>Sophie L.</h3>
-            <span className="patient-age">32 ans</span>
-          </div>
-          <div className="patient-date">Il y a 2 jours</div>
-          <span className="status-badge warning">Analyse prioritaire</span>
-          <button className="view-btn-icon">➔</button>
-        </div>
-
-        <div className="patient-list-item">
-          <div className="patient-avatar-small">M</div>
-          <div className="patient-info-row">
-            <h3>Marc D.</h3>
-            <span className="patient-age">45 ans</span>
-          </div>
-          <div className="patient-date">Il y a 1 mois</div>
-          <span className="status-badge stable">Stable</span>
-          <button className="view-btn-icon">➔</button>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -285,7 +346,7 @@ export default function Dashboard({ onLogout }) {
         <h2>CONNAISSANCES <span className="brand-light">PDF & IA</span></h2>
       </div>
       <p className="card-description">
-        Alimentez le cerveau de DermaNova. Importez des ouvrages internationaux et des publications scientifiques pour affiner la précision des diagnostics de l'assistant robot.
+        Alimentez le cerveau de DermaNova. Importez des ouvrages internationaux pour affiner la précision des diagnostics.
       </p>
 
       <div className="pdf-knowledge-layout">
@@ -308,35 +369,22 @@ export default function Dashboard({ onLogout }) {
         </div>
 
         <div className="pdf-library">
-          <h3>Ouvrages ingérés récents</h3>
+          <h3>Ouvrages intégrés récemment</h3>
           <ul className="library-list">
-            <li className="library-item glass-panel">
-              <span className="book-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              </span>
-              <div className="book-info">
-                <h4>Fitzpatrick's Dermatology, 9th Edition</h4>
-                <span>Base de données internationale • Traité à 100%</span>
-              </div>
-            </li>
-            <li className="library-item glass-panel">
-              <span className="book-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              </span>
-              <div className="book-info">
-                <h4>Dermatology - Bolognia (Vol 1 & 2)</h4>
-                <span>Atlas clinique • Traité à 100%</span>
-              </div>
-            </li>
-            <li className="library-item glass-panel">
-              <span className="book-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              </span>
-              <div className="book-info">
-                <h4>Journal of Investigative Dermatology - 2025</h4>
-                <span>Publications récentes • Traité à 100%</span>
-              </div>
-            </li>
+            {pdfs.map(pdf => (
+              <li key={pdf.id} className="library-item glass-panel">
+                <span className="book-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </span>
+                <div className="book-info">
+                  <h4>{pdf.name}</h4>
+                  <span>{pdf.size} • {pdf.type} • {pdf.status}</span>
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -405,13 +453,19 @@ export default function Dashboard({ onLogout }) {
           </nav>
 
           <div className="sidebar-footer">
-            <div className="user-profile">
-              <div className="user-avatar-placeholder"></div>
+            <div className="user-profile-card">
+              <div className="user-avatar-placeholder">D</div>
               <div className="user-info">
                 <span className="user-name">Dr. Desouches</span>
                 <span className="user-role">Dermatologue</span>
-                <button className="logout-btn" onClick={onLogout}>Se déconnecter</button>
               </div>
+              <button className="logout-btn-icon" onClick={onLogout} title="Se déconnecter">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </button>
             </div>
           </div>
         </aside>
@@ -446,6 +500,36 @@ export default function Dashboard({ onLogout }) {
         </div>
         
       </div>
+
+      {/* Modal Nouveau Patient */}
+      {isNewPatientModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Nouveau Patient</h3>
+            <form className="modal-form" onSubmit={handleAddPatient}>
+              <input 
+                type="text" 
+                placeholder="Nom complet (ex: Jean Dupont)" 
+                value={newPatientData.name}
+                onChange={e => setNewPatientData({...newPatientData, name: e.target.value})}
+                autoFocus
+                required
+              />
+              <input 
+                type="number" 
+                placeholder="Âge" 
+                value={newPatientData.age}
+                onChange={e => setNewPatientData({...newPatientData, age: e.target.value})}
+                required
+              />
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={() => setIsNewPatientModalOpen(false)}>Annuler</button>
+                <button type="submit" className="btn-submit">Enregistrer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
