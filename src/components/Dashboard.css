@@ -1129,7 +1129,17 @@
   flex-direction: column;
   gap: 0.8rem;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+}
+
+/* Hide scrollbar for patient scroll area */
+.patient-scroll-area::-webkit-scrollbar {
+  display: none;
+}
+.patient-scroll-area {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .patient-info-row {
@@ -1319,6 +1329,15 @@
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--glass-border);
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (max-width: 1400px) {
