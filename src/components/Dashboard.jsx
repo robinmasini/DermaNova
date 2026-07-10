@@ -178,18 +178,20 @@ export default function Dashboard({ onLogout }) {
 Analyse cette image dermatologique du patient avec la plus grande précision clinique.
 Base-toi EXCLUSIVEMENT sur les connaissances du document PDF fourni ci-dessous si elles sont pertinentes.
 
-Je veux une analyse extrêmement approfondie, détaillée et technique. Ne te contente pas de descriptions superficielles.
+Je veux une analyse extrêmement approfondie, détaillée et technique pour le diagnostic et les traitements. Ne te contente pas de descriptions superficielles.
 Le diagnostic doit expliquer l'étiologie possible, et les traitements doivent être un protocole clinique complet, étape par étape, incluant molécules actives, dosages ou techniques médicales (laser, peeling, etc.) justifiés.
 
 Contexte PDF:
 ${pdfContext}
 
-Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure, en écrivant des paragraphes très longs, professionnels et argumentés pour les sections textuelles :
+Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure. 
+ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS renvoyer une valeur très courte (ex: "45%", "5.5", "Moyenne", "30%"). Si tu ne peux pas évaluer, réponds juste "N/A" ou "Non mesurable". Ne mets JAMAIS de longues phrases dans ces champs.
+En revanche, écris des paragraphes très longs, professionnels et argumentés pour les sections 'agingDetails', 'diagnosis', 'recommendation' et 'treatments' :
 {
-  "hydration": "Valeur (ex: 45%)",
-  "ph": "Valeur (ex: 5.5)",
-  "elasticity": "Valeur (ex: Bonne)",
-  "aging": "Pourcentage (ex: 30%)",
+  "hydration": "Valeur courte (ex: 45% ou N/A)",
+  "ph": "Valeur courte (ex: 5.5 ou N/A)",
+  "elasticity": "Valeur courte (ex: Bonne ou N/A)",
+  "aging": "Valeur courte (ex: 30%)",
   "agingDetails": "Analyse clinique exhaustive des signes de vieillissement (rides, ptôse, dommages actiniques), expliquant la physiopathologie.",
   "diagnosis": "Diagnostic clinique profond, exhaustif et argumenté justifiant précisément les observations visuelles.",
   "recommendation": "Recommandation générale et stratégie de prise en charge globale.",
