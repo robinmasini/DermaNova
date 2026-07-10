@@ -15,8 +15,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(10, 10, 10, 0.15); /* Keep slightly dark to make white text pop */
-  /* Removed backdrop-filter so the background image is perfectly sharp in empty spaces */
+  background: rgba(10, 10, 10, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 0;
 }
 
@@ -792,9 +793,12 @@
   max-width: 480px;
   max-height: 480px;
   object-fit: contain;
+  object-position: bottom;
   opacity: 0.95;
-  margin: 0 auto -0.5rem auto;
+  margin: 0 auto -45px auto;
   pointer-events: none;
+  position: relative;
+  z-index: 1;
 }
 
 .start-analysis-btn {
