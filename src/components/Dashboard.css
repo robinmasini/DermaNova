@@ -770,20 +770,19 @@
 }
 
 .structured-item {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
   padding: 1rem;
   border-radius: 8px;
-  border-left: 2px solid var(--accent-cyan);
 }
 
 .treatment-details .structured-item {
-  border-left: 2px solid var(--accent-teal);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .structured-title {
   display: block;
   font-weight: 700;
-  color: var(--accent-cyan);
+  color: #ffffff;
   margin-bottom: 0.4rem;
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -791,7 +790,7 @@
 }
 
 .treatment-details .structured-title {
-  color: var(--accent-teal);
+  color: #ffffff;
 }
 
 .structured-item p {
