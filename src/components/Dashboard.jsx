@@ -247,7 +247,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
 {
   "hydration": "Valeur courte estimée (ex: 45%)",
   "ph": "Valeur courte estimée (ex: 5.5)",
-  "elasticity": "Valeur courte estimée (ex: Bonne)",
+  "elasticity": "Score clinique estimé (ex: Grade I ou Indice 0.8)",
   "aging": "Valeur courte (ex: 30%)",
   "agingDetails": [
     { "title": "Nom du signe", "description": "Explication hyper détaillée, très longue et exhaustive de la physiopathologie et des observations." }
@@ -382,17 +382,25 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
 
               {resultTab === 'diagnostic' && (
                 <div className="tab-content animate-fade-in">
-                  <h3 className="results-title">RÉSULTATS BIOMÉTRIQUES</h3>
                   <div className="metrics-grid">
                     <div className="metric-box">
+                      <div className="metric-icon" style={{marginBottom: '0.8rem', color: 'var(--accent-cyan)'}}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                      </div>
                       <span className="metric-label">HYDRATATION</span>
                       <span className="metric-value">{analysisResult.hydration}</span>
                     </div>
                     <div className="metric-box">
+                      <div className="metric-icon" style={{marginBottom: '0.8rem', color: 'var(--accent-teal)'}}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3H15M10 9H14M3 21H21M7 21V5C7 4.44772 7.44772 4 8 4H16C16.5523 4 17 4.44772 17 5V21"></path></svg>
+                      </div>
                       <span className="metric-label">PH DERMIQUE</span>
                       <span className="metric-value">{analysisResult.ph}</span>
                     </div>
                     <div className="metric-box">
+                      <div className="metric-icon" style={{marginBottom: '0.8rem', color: '#ffbd2e'}}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                      </div>
                       <span className="metric-label">ÉLASTICITÉ</span>
                       <span className="metric-value">{analysisResult.elasticity}</span>
                     </div>
