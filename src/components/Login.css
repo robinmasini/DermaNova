@@ -23,15 +23,16 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 420px;
+  max-width: 500px; /* Wider to cover more area */
   padding: 3rem 2.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(18, 18, 18, 0.85); /* Much darker to hide the watermark */
-  backdrop-filter: blur(25px); /* Strong blur to hide the watermark */
-  -webkit-backdrop-filter: blur(25px);
+  background: rgba(60, 60, 60, 0.98); /* Clean, almost solid grey */
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15); /* Slight border for cleanliness */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
@@ -41,9 +42,10 @@
 }
 
 .login-logo {
-  height: 80px;
+  height: 180px; /* Huge logo to help cover the watermark */
   object-fit: contain;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+  margin-bottom: 1rem;
 }
 
 .login-form {
