@@ -357,18 +357,7 @@ export default function Dashboard({ onLogout }) {
         </div>
 
         <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
-          <div className="robot-dialogue">
-            <p>
-              {isAnalyzing 
-                ? "Analyse de l'image et croisement avec vos documents PDF..." 
-                : analysisResult
-                  ? "Analyse IA terminée ! Voici le rapport détaillé fondé sur vos ouvrages."
-                  : selectedImage 
-                    ? "Image reçue ! Prêt pour l'analyse IA." 
-                    : "Bonjour Dr. Desouches ! Je suis prêt."}
-            </p>
-          </div>
-          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
+          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} style={{ marginBottom: '1rem', marginTop: '-2rem' }} />
           <button 
             className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
             onClick={startAnalysis}
