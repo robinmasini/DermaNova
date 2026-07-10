@@ -479,11 +479,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
     </div>
   );
 
-  const renderPatientsList = () => (
-    <div className="content-card animate-fade-in">
-      <div className="card-header patients">
-        <div className="title-area">
-          <h2>LISTE DES <span className="brand-light">PATIENTS</span></h2>
+
   const renderPatientsList = () => {
     const filteredPatients = patients.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
