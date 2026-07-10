@@ -97,9 +97,10 @@
 
 .user-profile-card {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1.2rem;
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
@@ -107,10 +108,18 @@
   width: 100%;
 }
 
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
 .user-avatar-placeholder {
   width: 40px;
   height: 40px;
-  background: var(--accent-teal);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -134,27 +143,26 @@
 
 .user-info .user-role {
   font-size: 0.8rem;
-  color: var(--accent-cyan);
-  opacity: 0.8;
+  color: #cccccc; /* Sober gray/white */
+  opacity: 0.9;
 }
 
-.logout-btn-icon {
+.logout-btn-text {
   background: transparent;
   border: none;
   color: #ff6b6b;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
+  padding: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: opacity 0.3s ease;
+  opacity: 0.8;
+  margin-top: 0.2rem;
 }
 
-.logout-btn-icon:hover {
-  background: rgba(255, 107, 107, 0.1);
-  color: #ff4757;
+.logout-btn-text:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 /* Modals */
@@ -225,8 +233,14 @@
 }
 
 .btn-submit {
-  background: var(--accent-cyan);
-  color: #000;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  background: rgba(255, 255, 255, 0.8);
 }
 
 /* Contenu Principal */
@@ -783,85 +797,66 @@
 }
 
 .robot-image {
-  height: 220px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 90%;
+  max-width: 400px;
+  max-height: 400px;
   object-fit: contain;
-  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
-  transition: transform 0.3s ease;
-}
-
-.robot-image.floating {
-  animation: float-robot 3s ease-in-out infinite alternate;
-}
-
-@keyframes float-robot {
-  0% { transform: translateY(0); filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5)); }
-  100% { transform: translateY(-15px); filter: drop-shadow(0 35px 30px rgba(0, 0, 0, 0.3)); }
+  opacity: 0.95;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .start-analysis-btn {
-  padding: 1rem 1.5rem;
-  border-radius: 50px;
-  border: none;
-  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-teal) 100%);
-  color: #fff;
-  font-family: var(--font-main);
-  font-size: 1.1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(6, 214, 160, 0.4);
   width: 100%;
+  padding: 1.2rem;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
 }
 
-.start-analysis-btn:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 12px 25px rgba(6, 214, 160, 0.6);
-}
-
-.start-analysis-btn.analyzing {
-  background: linear-gradient(135deg, #888 0%, #555 100%);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-
-.start-analysis-btn.success {
-  background: transparent;
-  border: 1px solid var(--accent-teal);
-  box-shadow: none;
-}
-
-.start-analysis-btn.success:hover {
-  background: rgba(6, 214, 160, 0.1);
+.start-analysis-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 255, 255, 0.3);
+  background: #f0f0f0;
 }
 
 /* Common Card Styles */
 .premium-btn-small {
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  border: none;
-  background: var(--accent-cyan);
-  color: #121212;
-  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .premium-btn-small:hover {
-  background: var(--accent-teal);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .premium-btn-small.outline {
   background: transparent;
-  border: 1px solid var(--accent-cyan);
-  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .premium-btn-small.outline:hover {
-  background: rgba(76, 201, 240, 0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Patients List */
