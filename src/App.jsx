@@ -3,14 +3,26 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('dermaNovaAuth') === 'true';
+  });
+
+  const handleLogin = () => {
+    localStorage.setItem('dermaNovaAuth', 'true');
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('dermaNovaAuth');
+    setIsAuthenticated(false);
+  };
 
   return (
     <>
       {isAuthenticated ? (
-        <Dashboard />
+        <Dashboard onLogout={handleLogout} />
       ) : (
-        <Login onLogin={() => setIsAuthenticated(true)} />
+        <Login onLogin={handleLogin} />
       )}
     </>
   );
