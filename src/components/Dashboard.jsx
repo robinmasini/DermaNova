@@ -152,31 +152,27 @@ export default function Dashboard({ onLogout }) {
           pdfs.map(p => `--- OUVRAGE: ${p.name} ---\n${p.content.substring(0, 8000)}`).join("\n\n");
       }
 
-      const prompt = `Tu es une Intelligence Artificielle médicale d'élite spécialisée en dermatologie, nommée DermaNova.
-      Ton objectif est d'analyser rigoureusement l'image de peau fournie et de renvoyer un diagnostic précis au format JSON valide.
-      
-      ${pdfContext}
-      
-      IMPORTANT: Analyse l'image du patient objectivement. Si la littérature (fournie ci-dessus) mentionne des traitements ou diagnostics spécifiques pertinents pour les caractéristiques visibles sur l'image, intègre-les absolument.
-      
-      Renvoie STRICTEMENT un objet JSON avec la structure suivante (aucun autre texte, ni markdown):
-      {
-        "hydration": "Valeur en %",
-        "ph": "Valeur",
-        "elasticity": "Valeur en %",
-        "aging": {
-          "bioAge": "Âge estimé",
-          "wrinkles": "Niveau (ex: Légères, Modérées)",
-          "collagenLoss": "Valeur en %",
-          "details": "Analyse détaillée en une phrase"
-        },
-        "diagnosis": "Diagnostic clinique hyper détaillé de 3 phrases, IMPÉRATIVEMENT justifié par l'image ET la littérature fournie.",
-        "recommendation": "Prescription suggérée",
-        "routine": {
-          "matin": "Routine du matin détaillée",
-          "soir": "Routine du soir détaillée"
-        }
-      }`;
+      const promptText = `Tu es un expert dermatologue mondialement reconnu.
+Analyse cette image dermatologique du patient avec la plus grande précision clinique.
+Base-toi EXCLUSIVEMENT sur les connaissances du document PDF fourni ci-dessous si elles sont pertinentes.
+
+Je veux une analyse extrêmement approfondie, détaillée et technique. Ne te contente pas de descriptions superficielles.
+Le diagnostic doit expliquer l'étiologie possible, et les traitements doivent être un protocole clinique complet, étape par étape, incluant molécules actives, dosages ou techniques médicales (laser, peeling, etc.) justifiés.
+
+Contexte PDF:
+${pdfContext}
+
+Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure, en écrivant des paragraphes très longs, professionnels et argumentés pour les sections textuelles :
+{
+  "hydration": "Valeur (ex: 45%)",
+  "ph": "Valeur (ex: 5.5)",
+  "elasticity": "Valeur (ex: Bonne)",
+  "aging": "Pourcentage (ex: 30%)",
+  "agingDetails": "Analyse clinique exhaustive des signes de vieillissement (rides, ptôse, dommages actiniques), expliquant la physiopathologie.",
+  "diagnosis": "Diagnostic clinique profond, exhaustif et argumenté justifiant précisément les observations visuelles.",
+  "recommendation": "Recommandation générale et stratégie de prise en charge globale.",
+  "treatments": ["Protocole médical détaillé 1 avec justification clinique complète", "Protocole médical détaillé 2 avec justification", "Protocole médical détaillé 3 avec justification"]
+}`;
 
       // 2. Initialiser Gemini
       const ai = new GoogleGenAI({ apiKey: geminiKey });
@@ -194,7 +190,7 @@ export default function Dashboard({ onLogout }) {
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: [
-          prompt,
+          promptText,
           { inlineData: { data: base64data, mimeType: blob.type } }
         ],
         config: {
@@ -232,9 +228,10 @@ export default function Dashboard({ onLogout }) {
       
       <div className="scanner-body">
         <div className="upload-column glass-panel">
-          <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
+          <div className="upload-container compact" onClick={() => !selectedImage && fileInputRef.current.click()}>
             {selectedImage ? (
               <div className="uploaded-image-wrapper">
+                <button className="remove-photo-btn" onClick={(e) => { e.stopPropagation(); setSelectedImage(null); setAnalysisResult(null); }}>✕</button>
                 <img src={selectedImage.url} alt="Scan preview" className="uploaded-image" />
                 {isAnalyzing && <div className="scan-laser"></div>}
               </div>
@@ -254,6 +251,7 @@ export default function Dashboard({ onLogout }) {
               accept="image/*" 
               capture="environment" 
               ref={fileInputRef} 
+              id="photo-upload"
               style={{ display: 'none' }} 
               onChange={handleImageUpload} 
             />
@@ -316,11 +314,9 @@ export default function Dashboard({ onLogout }) {
                   <div className="aging-analysis">
                     <h4>VIEILLISSEMENT CUTANÉ</h4>
                     <div className="aging-stats">
-                      <div className="aging-stat"><span>Âge Biologique</span><strong>{analysisResult.aging.bioAge}</strong></div>
-                      <div className="aging-stat"><span>Rides & Ridules</span><strong>{analysisResult.aging.wrinkles}</strong></div>
-                      <div className="aging-stat"><span>Perte Collagène</span><strong>{analysisResult.aging.collagenLoss}</strong></div>
+                      <div className="aging-stat"><span>Score</span><strong>{analysisResult.aging}</strong></div>
                     </div>
-                    <p className="aging-details">{analysisResult.aging.details}</p>
+                    <p className="aging-details">{analysisResult.agingDetails}</p>
                   </div>
 
                   <div className="ai-diagnosis">
@@ -337,10 +333,9 @@ export default function Dashboard({ onLogout }) {
                     <p>{analysisResult.recommendation}</p>
                   </div>
                   <div className="treatment-details">
-                    <h4>ROUTINE SUGGÉRÉE</h4>
+                    <h4>PROTOCOLES CLINIQUES</h4>
                     <ul>
-                      <li><strong>Matin :</strong> {analysisResult.routine.matin}</li>
-                      <li><strong>Soir :</strong> {analysisResult.routine.soir}</li>
+                      {analysisResult.treatments.map((t, idx) => <li key={idx}>{t}</li>)}
                     </ul>
                   </div>
                 </div>
@@ -537,11 +532,13 @@ export default function Dashboard({ onLogout }) {
                 <div className="user-avatar-placeholder">D</div>
                 <div className="user-info">
                   <span className="user-name">Dr. Desouches</span>
-                  <span className="user-role">Dermatologue</span>
+                  <span className="user-role role-badge">Dermatologue</span>
                 </div>
               </div>
-              <button className="logout-btn-text" onClick={onLogout}>Se déconnecter</button>
             </div>
+            <button className="standalone-logout-btn" onClick={onLogout}>
+              Se déconnecter
+            </button>
           </div>
         </aside>
 

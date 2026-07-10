@@ -148,22 +148,24 @@
   opacity: 0.9;
 }
 
-.logout-btn-text {
-  background: transparent;
-  border: none;
-  color: #ff6b6b;
-  cursor: pointer;
-  padding: 0;
-  font-size: 0.85rem;
+.standalone-logout-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
   font-weight: 500;
-  transition: opacity 0.3s ease;
-  opacity: 0.8;
-  margin-top: 0.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-.logout-btn-text:hover {
-  opacity: 1;
-  text-decoration: underline;
+.standalone-logout-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.4);
 }
 
 /* Modals */
@@ -422,6 +424,30 @@
   width: 100%;
   height: 100%;
   position: relative;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 14px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.remove-photo-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
 }
 
 .uploaded-image {
