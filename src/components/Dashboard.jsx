@@ -333,7 +333,7 @@ export default function Dashboard({ onLogout }) {
               {resultTab === 'traitement' && (
                 <div className="tab-content animate-fade-in">
                   <div className="ai-recommendation">
-                    <h4>RECOMMANDATIONS IA</h4>
+                    <h4>RECOMMANDATIONS</h4>
                     <p>{analysisResult.recommendation}</p>
                   </div>
                   <div className="treatment-details">
@@ -357,13 +357,13 @@ export default function Dashboard({ onLogout }) {
         </div>
 
         <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
-          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} style={{ marginBottom: '1rem', marginTop: '-2rem' }} />
+          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
           <button 
             className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
             onClick={startAnalysis}
             disabled={isAnalyzing}
           >
-            {isAnalyzing ? "ANALYSE IA EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE IA"}
+            {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
           </button>
         </div>
       </div>

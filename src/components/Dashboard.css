@@ -530,7 +530,7 @@
 
 .results-title {
   font-size: 1.2rem;
-  color: var(--accent-cyan);
+  color: #ffffff;
   letter-spacing: 1px;
 }
 
@@ -604,7 +604,7 @@
   background: rgba(255, 255, 255, 0.03);
   padding: 1.2rem 1.5rem;
   border-radius: 16px;
-  border-left: 4px solid var(--accent-teal);
+  border-left: 4px solid #ffffff;
 }
 
 .aging-analysis h4 {
@@ -650,11 +650,11 @@
 }
 
 .ai-diagnosis {
-  border-left: 4px solid var(--accent-cyan);
+  border-left: 4px solid #ffffff;
 }
 
 .ai-recommendation {
-  border-left: 4px solid var(--accent-teal);
+  border-left: 4px solid #ffffff;
 }
 
 .ai-diagnosis h4, .ai-recommendation h4 {
@@ -674,7 +674,7 @@
   background: rgba(255, 255, 255, 0.03);
   padding: 1.5rem;
   border-radius: 16px;
-  border-left: 4px solid var(--accent-teal);
+  border-left: 4px solid #ffffff;
 }
 
 .treatment-details h4 {
@@ -702,7 +702,7 @@
 
 .treatment-details li::before {
   content: '•';
-  color: var(--accent-teal);
+  color: #ffffff;
   position: absolute;
   left: 0;
   font-size: 1.2rem;
@@ -788,12 +788,12 @@
 }
 
 .robot-image {
-  width: 90%;
-  max-width: 320px;
-  max-height: 320px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 480px;
   object-fit: contain;
   opacity: 0.95;
-  margin: 0 auto 1.5rem auto;
+  margin: 0 auto -0.5rem auto;
   pointer-events: none;
 }
 
