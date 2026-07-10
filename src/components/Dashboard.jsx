@@ -135,8 +135,7 @@ export default function Dashboard({ onLogout }) {
     const newHistory = analysisResult ? [{
       date: new Date().toLocaleDateString(),
       image: selectedImage?.url,
-      diagnosis: analysisResult.diagnosis,
-      recommendation: analysisResult.recommendation
+      analysis: analysisResult
     }] : [];
 
     const newPatient = {
@@ -177,8 +176,7 @@ export default function Dashboard({ onLogout }) {
     const newHistoryEntry = {
       date: new Date().toLocaleDateString(),
       image: selectedImage?.url,
-      diagnosis: analysisResult.diagnosis,
-      recommendation: analysisResult.recommendation
+      analysis: analysisResult
     };
     
     const updatedPatient = {
@@ -579,13 +577,47 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
                             </div>
                           )}
                           <div style={{flex: 1}}>
-                            <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Bilan</h4>
-                            <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
-                              {Array.isArray(h.diagnosis) 
-                                ? h.diagnosis.map((d, dIdx) => <div key={dIdx}><strong>{d.title}:</strong> {renderTextWithBold(d.description)}</div>)
-                                : <p>{renderTextWithBold(h.diagnosis)}</p>
-                              }
-                            </div>
+                            {h.analysis ? (
+                              <>
+                                <h4 style={{fontSize: '1rem', color: 'var(--accent-cyan)', marginBottom: '0.5rem'}}>Bilan Biométrique</h4>
+                                <div style={{display: 'flex', gap: '1rem', marginBottom: '1rem', fontSize: '0.9rem'}}>
+                                  <span style={{background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.6rem', borderRadius: '4px'}}>Hydratation: {h.analysis.hydration}</span>
+                                  <span style={{background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.6rem', borderRadius: '4px'}}>pH: {h.analysis.ph}</span>
+                                  <span style={{background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.6rem', borderRadius: '4px'}}>Élasticité: {h.analysis.elasticity}</span>
+                                </div>
+                                
+                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Diagnostic IA</h4>
+                                <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
+                                  {Array.isArray(h.analysis.diagnosis) 
+                                    ? h.analysis.diagnosis.map((d, dIdx) => <div key={dIdx} style={{marginBottom: '0.5rem'}}><strong>{d.title}:</strong> {renderTextWithBold(d.description)}</div>)
+                                    : <p>{renderTextWithBold(h.analysis.diagnosis)}</p>
+                                  }
+                                </div>
+
+                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Traitements Recommandés</h4>
+                                <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
+                                  {Array.isArray(h.analysis.treatments) 
+                                    ? h.analysis.treatments.map((t, tIdx) => <div key={tIdx} style={{marginBottom: '0.5rem'}}><strong>{t.title || t}:</strong> {t.description ? renderTextWithBold(t.description) : ''}</div>)
+                                    : <ul>{h.analysis.treatments && h.analysis.treatments.map((t, idx) => <li key={idx}>{renderTextWithBold(t)}</li>)}</ul>
+                                  }
+                                </div>
+                                
+                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Recommandation Globale</h4>
+                                <p style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0'}}>{renderTextWithBold(h.analysis.recommendation)}</p>
+                              </>
+                            ) : h.diagnosis ? (
+                              <>
+                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Diagnostic</h4>
+                                <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
+                                  {Array.isArray(h.diagnosis) 
+                                    ? h.diagnosis.map((d, dIdx) => <div key={dIdx}><strong>{d.title}:</strong> {renderTextWithBold(d.description)}</div>)
+                                    : <p>{renderTextWithBold(h.diagnosis)}</p>
+                                  }
+                                </div>
+                              </>
+                            ) : (
+                              <p style={{color: 'var(--text-muted)'}}>Aucune analyse détaillée enregistrée pour cette consultation.</p>
+                            )}
                           </div>
                         </div>
                       </div>
