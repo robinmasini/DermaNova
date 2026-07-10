@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Login.css';
 import logo from '../assets/dn.png';
+import backgroundVideo from '../assets/background.mp4';
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -13,10 +14,15 @@ export default function Login({ onLogin }) {
 
   return (
     <div className="login-container">
-      <div className="login-background">
-        <div className="blob blob-1"></div>
-        <div className="blob blob-2"></div>
-      </div>
+      <video 
+        className="login-video-bg" 
+        autoPlay 
+        loop 
+        muted 
+        playsInline
+      >
+        <source src={backgroundVideo} type="video/mp4" />
+      </video>
       
       <div className="glass-panel glass-panel-glow login-card animate-fade-in">
         <div className="login-header">

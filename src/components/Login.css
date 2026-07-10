@@ -8,44 +8,15 @@
   background-color: var(--bg-darker);
 }
 
-.login-background {
+.login-video-bg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   z-index: 0;
-  overflow: hidden;
-}
-
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.5;
-  animation: float 10s infinite ease-in-out alternate;
-}
-
-.blob-1 {
-  width: 400px;
-  height: 400px;
-  background: var(--accent-teal);
-  top: -100px;
-  left: -100px;
-}
-
-.blob-2 {
-  width: 500px;
-  height: 500px;
-  background: var(--accent-cyan);
-  bottom: -150px;
-  right: -150px;
-  animation-delay: -5s;
-}
-
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(50px, 50px) scale(1.1); }
+  opacity: 0.8; /* Slight dimming so the card pops more */
 }
 
 .login-card {
@@ -57,7 +28,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(18, 18, 18, 0.4);
+  background: rgba(18, 18, 18, 0.85); /* Much darker to hide the watermark */
+  backdrop-filter: blur(25px); /* Strong blur to hide the watermark */
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .login-header {
