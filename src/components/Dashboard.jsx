@@ -185,12 +185,12 @@ Contexte PDF:
 ${pdfContext}
 
 Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure. 
-ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS renvoyer une valeur très courte (ex: "45%", "5.5", "Moyenne", "30%"). Si tu ne peux pas évaluer, réponds juste "N/A" ou "Non mesurable". Ne mets JAMAIS de longues phrases dans ces champs.
+ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS renvoyer une valeur très courte (ex: "45%", "5.5", "Moyenne", "30%"). Même si c'est difficile à évaluer sur photo, fais une déduction clinique experte et donne TOUJOURS une valeur estimée réaliste. Ne dis JAMAIS que c'est non mesurable ou "N/A". Ne mets JAMAIS de longues phrases dans ces champs.
 En revanche, pour éviter les gros blocs de texte indigestes, structure tes réponses pour 'agingDetails', 'diagnosis' et 'treatments' sous forme de listes d'objets avec un 'title' (titre clair et concis) et une 'description' (explication détaillée) :
 {
-  "hydration": "Valeur courte (ex: 45% ou N/A)",
-  "ph": "Valeur courte (ex: 5.5 ou N/A)",
-  "elasticity": "Valeur courte (ex: Bonne ou N/A)",
+  "hydration": "Valeur courte estimée (ex: 45%)",
+  "ph": "Valeur courte estimée (ex: 5.5)",
+  "elasticity": "Valeur courte estimée (ex: Bonne)",
   "aging": "Valeur courte (ex: 30%)",
   "agingDetails": [
     { "title": "Nom du signe (ex: Rides d'expression)", "description": "Explication détaillée" }
