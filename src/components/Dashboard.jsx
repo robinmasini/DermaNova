@@ -4,7 +4,7 @@ import logo from '../assets/dn.png';
 import bgImage from '../assets/background.png';
 import robotImg from '../assets/robot.png';
 
-export default function Dashboard() {
+export default function Dashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [resultTab, setResultTab] = useState('diagnostic');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -410,6 +410,7 @@ export default function Dashboard() {
               <div className="user-info">
                 <span className="user-name">Dr. Desouches</span>
                 <span className="user-role">Dermatologue</span>
+                <button className="logout-btn" onClick={onLogout}>Se déconnecter</button>
               </div>
             </div>
           </div>
