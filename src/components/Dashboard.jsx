@@ -596,7 +596,9 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure
         {/* Sidebar à gauche */}
         <aside className="main-sidebar glass-panel">
           <div className="sidebar-logo-container">
-            <img src={logo} alt="DermaNova Logo" className="sidebar-logo" />
+            <div className="sidebar-logo-wrapper">
+              <img src={logo} alt="DermaNova Logo" className="sidebar-logo" />
+            </div>
           </div>
           
           <nav className="sidebar-nav">
