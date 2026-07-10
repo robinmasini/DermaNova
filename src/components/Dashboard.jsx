@@ -3,7 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 import * as pdfjsLib from 'pdfjs-dist';
 import './Dashboard.css';
 import logo from '../assets/dn.png';
-import bgImage from '../assets/background.png';
+import bgImage from '../assets/bg.png';
 import robotImg from '../assets/robot.png';
 
 // Configuration du worker PDF.js via CDN pour éviter les problèmes de build Vite
