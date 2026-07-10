@@ -45,7 +45,7 @@
 }
 
 .sidebar-logo {
-  height: 80px; /* Smaller, more refined logo */
+  height: 110px; /* Larger logo */
   object-fit: contain;
   filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
 }
@@ -60,7 +60,8 @@
 .nav-item {
   background: transparent;
   border: 1px solid transparent;
-  color: var(--text-muted);
+  color: #ffffff; /* Explicitly white */
+  opacity: 0.8; /* Slight opacity for inactive state */
   text-align: left;
   padding: 0.8rem 1.2rem;
   font-family: var(--font-main);
@@ -75,15 +76,17 @@
 
 .nav-item:hover {
   background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
+  color: #ffffff;
+  opacity: 1;
   transform: translateX(5px);
 }
 
 .nav-item.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  opacity: 1;
   border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-footer {

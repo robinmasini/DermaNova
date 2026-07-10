@@ -2,12 +2,12 @@
   --font-main: 'Montserrat', sans-serif;
   --bg-dark: #121212;
   --bg-darker: #0a0a0a;
-  --text-main: #f5f5f5;
-  --text-muted: #a0a0a0;
+  --text-main: #ffffff;
+  --text-muted: #e5e5e5; /* Brighter grey/white for readability */
   --accent-cyan: #4cc9f0;
   --accent-teal: #06d6a0;
-  --glass-bg: rgba(255, 255, 255, 0.08); /* Milky Glass */
-  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.15); /* Stronger opacity for panels */
+  --glass-border: rgba(255, 255, 255, 0.25);
   --glass-glow: rgba(255, 255, 255, 0.1);
 }
 
