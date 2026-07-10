@@ -50,6 +50,12 @@
   display: inline-block;
   overflow: hidden;
   border-radius: 4px;
+  -webkit-mask-image: url('../assets/dn.png');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url('../assets/dn.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
 }
 
 .sidebar-logo-wrapper::after {
