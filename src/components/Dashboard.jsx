@@ -69,7 +69,7 @@ export default function Dashboard() {
 
   // Le Scanner combiné
   const renderScannerCard = () => (
-    <div className="glass-panel unified-scanner-card animate-fade-in">
+    <div className="unified-scanner-card animate-fade-in">
       <div className="card-header">
         <h2>ANALYSE <span className="brand-light">DERMATOLOGIQUE</span></h2>
       </div>
@@ -80,8 +80,8 @@ export default function Dashboard() {
       <div className="scanner-body">
         
         {/* Colonne 1: Uploader compact */}
-        <div className="upload-column">
-          <div className="upload-container glass-panel-glow compact" onClick={() => fileInputRef.current.click()}>
+        <div className="upload-column glass-panel">
+          <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
             {selectedImage ? (
               <div className="uploaded-image-wrapper">
                 <img src={selectedImage} alt="Scan preview" className="uploaded-image" />
@@ -145,21 +145,21 @@ export default function Dashboard() {
                 <div className="tab-content animate-fade-in">
                   <h3 className="results-title">RÉSULTATS BIOMÉTRIQUES</h3>
                   <div className="metrics-grid">
-                    <div className="metric-box glass-panel-glow">
+                    <div className="metric-box">
                       <span className="metric-label">HYDRATATION</span>
                       <span className="metric-value">{analysisResult.hydration}</span>
                     </div>
-                    <div className="metric-box glass-panel-glow">
+                    <div className="metric-box">
                       <span className="metric-label">PH DERMIQUE</span>
                       <span className="metric-value">{analysisResult.ph}</span>
                     </div>
-                    <div className="metric-box glass-panel-glow">
+                    <div className="metric-box">
                       <span className="metric-label">ÉLASTICITÉ</span>
                       <span className="metric-value">{analysisResult.elasticity}</span>
                     </div>
                   </div>
                   
-                  <div className="aging-analysis glass-panel">
+                  <div className="aging-analysis">
                     <h4>VIEILLISSEMENT CUTANÉ</h4>
                     <div className="aging-stats">
                       <div className="aging-stat"><span>Âge Biologique</span><strong>{analysisResult.aging.bioAge}</strong></div>
@@ -169,7 +169,7 @@ export default function Dashboard() {
                     <p className="aging-details">{analysisResult.aging.details}</p>
                   </div>
 
-                  <div className="ai-diagnosis glass-panel">
+                  <div className="ai-diagnosis">
                     <h4>DIAGNOSTIC CLINIQUE</h4>
                     <p>{analysisResult.diagnosis}</p>
                   </div>
@@ -178,11 +178,11 @@ export default function Dashboard() {
 
               {resultTab === 'traitement' && (
                 <div className="tab-content animate-fade-in">
-                  <div className="ai-recommendation glass-panel">
+                  <div className="ai-recommendation">
                     <h4>RECOMMANDATIONS IA</h4>
                     <p>{analysisResult.recommendation}</p>
                   </div>
-                  <div className="treatment-details glass-panel">
+                  <div className="treatment-details">
                     <h4>ROUTINE SUGGÉRÉE</h4>
                     <ul>
                       <li><strong>Matin :</strong> Nettoyant doux, Sérum antioxydant (Vitamine C), Écran solaire SPF 50+.</li>
@@ -201,8 +201,8 @@ export default function Dashboard() {
         </div>
 
         {/* Colonne 3: Robot & CTA */}
-        <div className={`robot-side ${isAnalyzing ? 'scanning-active' : ''}`}>
-          <div className="robot-dialogue glass-panel">
+        <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
+          <div className="robot-dialogue">
             <p>
               {isAnalyzing 
                 ? "Recherche de correspondances cliniques..." 
@@ -227,7 +227,7 @@ export default function Dashboard() {
   );
 
   const renderPatientsList = () => (
-    <div className="glass-panel content-card animate-fade-in">
+    <div className="content-card animate-fade-in">
       <div className="card-header">
         <h2>LISTE DES <span className="brand-light">PATIENTS</span></h2>
         <button className="premium-btn-small">Nouveau Patient</button>
@@ -236,8 +236,8 @@ export default function Dashboard() {
         Sélectionnez un patient pour accéder à son dossier complet et ses analyses. Classés du plus récent au plus ancien.
       </p>
       
-      <div className="patients-list">
-        <div className="patient-list-item glass-panel-glow">
+      <div className="patients-list glass-panel" style={{padding: '2rem'}}>
+        <div className="patient-list-item">
           <div className="patient-avatar-small">J</div>
           <div className="patient-info-row">
             <h3>Juliette R.</h3>
@@ -248,7 +248,7 @@ export default function Dashboard() {
           <button className="view-btn-icon">➔</button>
         </div>
 
-        <div className="patient-list-item glass-panel-glow">
+        <div className="patient-list-item">
           <div className="patient-avatar-small">S</div>
           <div className="patient-info-row">
             <h3>Sophie L.</h3>
@@ -259,7 +259,7 @@ export default function Dashboard() {
           <button className="view-btn-icon">➔</button>
         </div>
 
-        <div className="patient-list-item glass-panel-glow">
+        <div className="patient-list-item">
           <div className="patient-avatar-small">M</div>
           <div className="patient-info-row">
             <h3>Marc D.</h3>
@@ -274,7 +274,7 @@ export default function Dashboard() {
   );
 
   const renderPdfKnowledge = () => (
-    <div className="glass-panel content-card animate-fade-in">
+    <div className="content-card animate-fade-in">
       <div className="card-header">
         <h2>CONNAISSANCES <span className="brand-light">PDF & IA</span></h2>
       </div>

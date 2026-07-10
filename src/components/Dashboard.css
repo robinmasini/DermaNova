@@ -29,7 +29,7 @@
 
 /* Sidebar Gauche */
 .main-sidebar {
-  width: 280px;
+  width: 240px; /* Thinner sidebar */
   height: calc(100vh - 2rem);
   margin: 1rem;
   padding: 2rem 1.5rem;
@@ -41,11 +41,11 @@
 .sidebar-logo-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .sidebar-logo {
-  height: 120px;
+  height: 80px; /* Smaller, more refined logo */
   object-fit: contain;
   filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
 }
@@ -62,11 +62,13 @@
   border: 1px solid transparent;
   color: var(--text-muted);
   text-align: left;
-  padding: 1rem 1.5rem;
+  padding: 0.8rem 1.2rem;
   font-family: var(--font-main);
-  font-size: 1.1rem;
+  font-size: 0.85rem; /* Smaller, elegant text */
   font-weight: 500;
   border-radius: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -157,11 +159,11 @@
   overflow-y: auto;
 }
 
-/* Unified Scanner Card */
+/* Unified Scanner Card wrapper */
 .unified-scanner-card {
   width: 100%;
   max-width: 1400px;
-  padding: 2.5rem;
+  padding: 1rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -183,17 +185,19 @@
 /* Scanner Body Grid (3 Columns) */
 .scanner-body {
   display: grid;
-  grid-template-columns: 280px 1fr 300px; /* Uploader compact, Résultats au centre, Robot à droite */
-  gap: 2.5rem;
+  grid-template-columns: 280px 1fr 320px; /* Adjust grid for independent cards */
+  gap: 2rem;
   align-items: stretch;
   min-height: 480px;
 }
 
-/* Upload Container (Compact) */
+/* Upload Container */
 .upload-column {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 30px;
 }
 
 .change-photo-btn {
