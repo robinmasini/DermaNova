@@ -1428,27 +1428,20 @@
     background-position: center bottom;
     background-repeat: no-repeat;
     z-index: 1000;
-    
-    /* Le secret magique : on coupe (mask) tout ce qui dépasse de l'image (le rectangle noir) */
-    -webkit-mask-image: url('../assets/navbar.png');
-    -webkit-mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-image: url('../assets/navbar.png');
-    mask-size: 100% 100%;
-    mask-repeat: no-repeat;
   }
 
   .mobile-nav-item {
     flex: 1;
     height: 100%;
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.6);
+    /* Un dégradé très doux pour assombrir l'icône sans créer de rectangle dur en haut (qui dépasse sur la courbe) */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 20%, rgba(0, 0, 0, 0) 85%);
     transition: background 0.3s ease;
   }
   
   .mobile-nav-item.center-item {
     flex: 1.2;
-    background: rgba(0, 0, 0, 0.6);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 20%, rgba(0, 0, 0, 0) 85%);
   }
 
   .mobile-nav-item.active {
