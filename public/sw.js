@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dermanova-v6';
+const CACHE_NAME = 'dermanova-v7';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -31,9 +31,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Stratégie "Network-First" (Réseau en priorité, Cache en secours)
+  // Cela empêche totalement le problème de la page blanche lors des mises à jour !
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
     })
   );
 });
