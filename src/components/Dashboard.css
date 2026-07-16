@@ -1428,6 +1428,14 @@
     background-position: center bottom;
     background-repeat: no-repeat;
     z-index: 1000;
+    
+    /* Le secret magique : on coupe (mask) tout ce qui dépasse de l'image (le rectangle noir) */
+    -webkit-mask-image: url('../assets/navbar.png');
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: url('../assets/navbar.png');
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
   }
 
   .mobile-nav-item {
