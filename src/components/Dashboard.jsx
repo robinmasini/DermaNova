@@ -5,6 +5,7 @@ import './Dashboard.css';
 import logo from '../assets/dn.png';
 import bgImage from '../assets/bg.png';
 import robotImg from '../assets/robot.png';
+import navbarImg from '../assets/navbar.png';
 
 // Configuration du worker PDF.js via CDN pour éviter les problèmes de build Vite
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -782,6 +783,30 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
             </button>
           </div>
         </aside>
+
+        {/* Navbar Mobile (remplace sidebar sur mobile) */}
+        <nav className="mobile-navbar" style={{ backgroundImage: `url(${navbarImg})` }}>
+          <div 
+            className={`mobile-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dashboard')}
+          ></div>
+          <div 
+            className={`mobile-nav-item ${activeTab === 'patients' ? 'active' : ''}`}
+            onClick={() => setActiveTab('patients')}
+          ></div>
+          <div 
+            className="mobile-nav-item center-item"
+            onClick={() => setActiveTab('dashboard')}
+          ></div>
+          <div 
+            className={`mobile-nav-item ${activeTab === 'pdf_knowledge' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pdf_knowledge')}
+          ></div>
+          <div 
+            className={`mobile-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          ></div>
+        </nav>
 
         {/* Contenu principal */}
         <div className="dashboard-content">
