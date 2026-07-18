@@ -1421,10 +1421,14 @@
     display: flex;
     position: fixed;
     bottom: 25px;
-    left: 5%;
-    width: 90%;
-    height: 24vw; /* Garde le ratio original de l'image (26.8vw * 0.9 = ~24vw) */
-    background: transparent;
+    left: 7.5%;
+    width: 85%;
+    height: 100px; /* Assez haut pour contenir l'image */
+    background-image: var(--nav-bg);
+    background-size: contain;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-color: transparent;
     z-index: 1000;
   }
 
@@ -1432,24 +1436,14 @@
     flex: 1;
     height: 100%;
     cursor: pointer;
-    background-image: var(--nav-bg);
-    background-size: 500% 100%;
-    background-repeat: no-repeat;
     background-color: transparent;
-    opacity: 0.4;
+    /* Un halo sombre et doux pour assombrir subtilement les icônes non sélectionnées sans faire de carré */
+    background-image: radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 50%);
     transition: all 0.3s ease;
   }
   
-  .mobile-nav-item:nth-child(1) { background-position: 0% 50%; }
-  .mobile-nav-item:nth-child(2) { background-position: 25% 50%; }
-  .mobile-nav-item:nth-child(3) { background-position: 50% 50%; }
-  .mobile-nav-item:nth-child(4) { background-position: 75% 50%; }
-  .mobile-nav-item:nth-child(5) { background-position: 100% 50%; }
-
   .mobile-nav-item.active {
-    opacity: 1;
-    /* L'image de la nav en premier plan, et un dégradé radial doux en arrière-plan */
-    background-image: var(--nav-bg), radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 60%);
-    background-size: 500% 100%, 100% 100%;
+    /* Le fond actif retire le halo sombre et met un petit halo lumineux inversé pour la faire ressortir */
+    background-image: radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 60%);
   }
 }
