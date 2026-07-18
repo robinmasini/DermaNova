@@ -1423,15 +1423,9 @@
     bottom: 25px;
     left: 5%;
     width: 90%;
-    height: 75px;
-    border-radius: 40px;
-    background: rgba(30, 30, 30, 0.6);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    height: 24vw; /* Garde le ratio original de l'image (26.8vw * 0.9 = ~24vw) */
+    background: transparent;
     z-index: 1000;
-    overflow: hidden;
   }
 
   .mobile-nav-item {
@@ -1441,7 +1435,8 @@
     background-image: var(--nav-bg);
     background-size: 500% 100%;
     background-repeat: no-repeat;
-    opacity: 0.5;
+    background-color: transparent;
+    opacity: 0.4;
     transition: all 0.3s ease;
   }
   
@@ -1453,6 +1448,8 @@
 
   .mobile-nav-item.active {
     opacity: 1;
-    background-color: rgba(0, 0, 0, 0.4);
+    /* L'image de la nav en premier plan, et un dégradé radial doux en arrière-plan */
+    background-image: var(--nav-bg), radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 60%);
+    background-size: 500% 100%, 100% 100%;
   }
 }
