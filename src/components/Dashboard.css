@@ -1436,14 +1436,11 @@
     flex: 1;
     height: 100%;
     cursor: pointer;
-    background-color: transparent;
-    /* Un halo sombre et doux pour assombrir subtilement les icônes non sélectionnées sans faire de carré */
-    background-image: radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 50%);
+    background: transparent;
     transition: all 0.3s ease;
   }
   
   .mobile-nav-item.active {
-    /* Le fond actif retire le halo sombre et met un petit halo lumineux inversé pour la faire ressortir */
-    background-image: radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 60%);
+    background: transparent;
   }
 }
