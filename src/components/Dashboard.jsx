@@ -785,7 +785,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
         </aside>
 
         {/* Navbar Mobile (remplace sidebar sur mobile) */}
-        <nav className="mobile-navbar" style={{ backgroundImage: `url(${navbarImg})` }}>
+        <nav className="mobile-navbar" style={{ '--nav-bg': `url(${navbarImg})` }}>
           <div 
             className={`mobile-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
             onClick={() => setActiveTab('dashboard')}
@@ -795,7 +795,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
             onClick={() => setActiveTab('patients')}
           ></div>
           <div 
-            className="mobile-nav-item center-item"
+            className="mobile-nav-item"
             onClick={() => setActiveTab('dashboard')}
           ></div>
           <div 
