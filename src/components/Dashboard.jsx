@@ -356,7 +356,7 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
           )}
         </div>
 
-        <div className="results-column glass-panel">
+        <div className={`results-column glass-panel ${!isAnalyzing && !analysisResult ? 'is-empty' : ''}`}>
           {isAnalyzing ? (
             <div className="analyzing-state">
               <div className="spinner"></div>

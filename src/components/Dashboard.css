@@ -1040,6 +1040,14 @@
   .action-row {
     margin-top: auto;
   }
+
+  .results-column.is-empty {
+    display: none !important;
+  }
+
+  .upload-container.compact {
+    height: 220px;
+  }
 }
 
 /* Common Card Styles */
