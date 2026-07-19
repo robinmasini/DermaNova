@@ -373,20 +373,13 @@
   opacity: 0.85;
 }
 
-/* Scanner Body Grid */
+/* Scanner Body Grid (3 Columns) */
 .scanner-body {
   display: grid;
+  grid-template-columns: 280px 1fr 320px; /* Adjust grid for independent cards */
   gap: 2rem;
   align-items: stretch;
   min-height: 480px;
-}
-
-.scanner-body.has-photo {
-  grid-template-columns: 280px 1fr 320px;
-}
-
-.scanner-body.no-photo {
-  grid-template-columns: 1fr 320px;
 }
 
 /* Upload Container */
@@ -970,7 +963,7 @@
 }
 
 .start-analysis-btn {
-  flex: 1;
+  width: 100%;
   padding: 1.2rem;
   border-radius: 16px;
   background: #ffffff;
@@ -981,6 +974,7 @@
   letter-spacing: 2px;
   cursor: pointer;
   position: relative;
+  margin-top: -95px;
   z-index: 2;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
@@ -996,38 +990,56 @@
   display: flex;
   gap: 10px;
   width: 100%;
-  z-index: 2;
   position: relative;
-  margin-top: auto;
+  z-index: 2;
 }
 
-.small-upload {
-  flex: 0 0 80px;
-  height: auto;
-  border: 2px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem;
+.small-upload.mobile-only {
+  display: none;
 }
 
-.small-upload:hover {
-  border-color: var(--accent-cyan);
-  background: rgba(76, 201, 240, 0.1);
-}
+@media (max-width: 768px) {
+  .upload-column.desktop-only {
+    display: none !important;
+  }
+  
+  .small-upload.mobile-only {
+    display: flex;
+    flex: 0 0 80px;
+    height: auto;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem;
+    transition: all 0.3s;
+  }
+  
+  .small-upload.mobile-only:hover {
+    border-color: var(--accent-cyan);
+    background: rgba(76, 201, 240, 0.1);
+  }
 
-.upload-placeholder-small {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  .upload-placeholder-small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .start-analysis-btn {
+    flex: 1;
+    margin-top: 0;
+  }
+
+  .action-row {
+    margin-top: auto;
+  }
 }
 
 /* Common Card Styles */
