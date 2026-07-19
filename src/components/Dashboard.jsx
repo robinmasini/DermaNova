@@ -312,37 +312,16 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
         Importez ou prenez une photo directe. L'IA croisera les données visuelles avec vos documents PDF intégrés.
       </p>
       
-      <div className="scanner-body">
-        <div className="upload-column glass-panel">
-          <div className="upload-container compact" onClick={() => !selectedImage && fileInputRef.current.click()}>
-            {selectedImage ? (
+      <div className={`scanner-body ${selectedImage ? 'has-photo' : 'no-photo'}`}>
+        {selectedImage && (
+          <div className="upload-column glass-panel">
+            <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
               <div className="uploaded-image-wrapper">
                 <button className="remove-photo-btn" onClick={(e) => { e.stopPropagation(); setSelectedImage(null); setAnalysisResult(null); }}>✕</button>
                 <img src={selectedImage.url} alt="Scan preview" className="uploaded-image" />
                 {isAnalyzing && <div className="scan-laser"></div>}
               </div>
-            ) : (
-              <div className="upload-placeholder">
-                <div className="upload-icon-ring">
-                  <span className="upload-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                  </span>
-                </div>
-                <h3>Photo</h3>
-                <span className="upload-subtext">Caméra ou Galerie</span>
-              </div>
-            )}
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment" 
-              ref={fileInputRef} 
-              id="photo-upload"
-              style={{ display: 'none' }} 
-              onChange={handleImageUpload} 
-            />
-          </div>
-          {selectedImage && (
+            </div>
             <div className="upload-actions">
               <button className="change-photo-btn" onClick={() => fileInputRef.current.click()}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px', verticalAlign: 'middle'}}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
@@ -353,8 +332,8 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
                 Enregistrer
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="results-column glass-panel">
           {isAnalyzing ? (
@@ -474,13 +453,34 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
 
         <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
           <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
-          <button 
-            className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
-            onClick={startAnalysis}
-            disabled={isAnalyzing}
-          >
-            {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
-          </button>
+          
+          <div className="action-row">
+            {!selectedImage && (
+              <div className="small-upload" onClick={() => fileInputRef.current.click()}>
+                <div className="upload-placeholder-small">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  <span>Photo</span>
+                </div>
+              </div>
+            )}
+            
+            <button 
+              className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
+              onClick={startAnalysis}
+              disabled={isAnalyzing}
+            >
+              {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
+            </button>
+          </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            capture="environment" 
+            ref={fileInputRef} 
+            style={{ display: 'none' }} 
+            onChange={handleImageUpload} 
+          />
         </div>
       </div>
     </div>

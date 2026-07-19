@@ -373,13 +373,20 @@
   opacity: 0.85;
 }
 
-/* Scanner Body Grid (3 Columns) */
+/* Scanner Body Grid */
 .scanner-body {
   display: grid;
-  grid-template-columns: 280px 1fr 320px; /* Adjust grid for independent cards */
   gap: 2rem;
   align-items: stretch;
   min-height: 480px;
+}
+
+.scanner-body.has-photo {
+  grid-template-columns: 280px 1fr 320px;
+}
+
+.scanner-body.no-photo {
+  grid-template-columns: 1fr 320px;
 }
 
 /* Upload Container */
@@ -963,7 +970,7 @@
 }
 
 .start-analysis-btn {
-  width: 100%;
+  flex: 1;
   padding: 1.2rem;
   border-radius: 16px;
   background: #ffffff;
@@ -974,7 +981,6 @@
   letter-spacing: 2px;
   cursor: pointer;
   position: relative;
-  margin-top: -95px;
   z-index: 2;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
@@ -984,6 +990,44 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(255, 255, 255, 0.3);
   background: #f0f0f0;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  z-index: 2;
+  position: relative;
+  margin-top: auto;
+}
+
+.small-upload {
+  flex: 0 0 80px;
+  height: auto;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+}
+
+.small-upload:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(76, 201, 240, 0.1);
+}
+
+.upload-placeholder-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 /* Common Card Styles */
