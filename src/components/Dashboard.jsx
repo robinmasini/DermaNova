@@ -262,7 +262,8 @@ ${pdfContext}
 Réponds UNIQUEMENT avec un objet JSON valide suivant exactement cette structure. 
 ATTENTION: Pour les champs 'hydration', 'ph', 'elasticity' et 'aging', tu DOIS renvoyer une valeur très courte (ex: "45%", "5.5", "Moyenne", "30%"). Même si c'est difficile à évaluer sur photo, fais une déduction clinique experte et donne TOUJOURS une valeur estimée réaliste. Ne dis JAMAIS que c'est non mesurable ou "N/A". Ne mets JAMAIS de longues phrases dans ces champs.
 En revanche, pour éviter les gros blocs de texte indigestes, structure tes réponses pour 'agingDetails', 'diagnosis' et 'treatments' sous forme de listes d'objets avec un 'title' (titre clair et concis) et une 'description' (explication détaillée). 
-CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entourant de doubles astérisques **) pour mettre en valeur les mots-clés, les symptômes et les molécules, afin de faciliter la lecture en diagonale !
+CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entourant de doubles astérisques **) pour mettre en valeur les mots-clés, les symptômes et les molécules, afin de faciliter la lecture en diagonale ! 
+TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔLE DANS LES VALEURS DE TEXTE. LE JSON DOIT ÊTRE STRICTEMENT VALIDE.
 {
   "hydration": "Valeur courte estimée (ex: 45%)",
   "ph": "Valeur courte estimée (ex: 5.5)",
@@ -307,7 +308,14 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
         }
       });
 
-      const resultText = response.text;
+      let resultText = response.text;
+      
+      // Nettoyage agressif pour éviter "Bad control character in string literal"
+      // Supprime les balises markdown
+      resultText = resultText.replace(/```json/gi, '').replace(/```/g, '');
+      // Remplace les caractères de contrôle (comme les sauts de ligne littéraux) par un espace
+      resultText = resultText.replace(/[\u0000-\u001F]+/g, ' ');
+
       const parsedJSON = JSON.parse(resultText);
       setAnalysisResult(parsedJSON);
       
