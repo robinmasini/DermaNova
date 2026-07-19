@@ -1113,12 +1113,51 @@
 }
 
 @media (max-width: 768px) {
+  .scanner-body {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .robot-side {
+    order: -1;
+    min-height: auto;
+    padding: 1rem;
+  }
+
+  .robot-image {
+    max-height: 120px;
+  }
+
   .upload-column.desktop-only {
     display: none !important;
   }
   
+  .results-column {
+    order: 2;
+  }
+
   .results-column.is-empty {
     display: none !important;
+  }
+
+  .upload-placeholder-small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .start-analysis-btn {
+    flex: 1;
+    margin-top: 0;
+  }
+
+  .action-row {
+    margin-top: auto;
   }
 
   .upload-container.compact {
