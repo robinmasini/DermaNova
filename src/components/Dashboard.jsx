@@ -13,7 +13,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs
 export default function Dashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [resultTab, setResultTab] = useState('diagnostic');
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   
@@ -59,19 +59,39 @@ export default function Dashboard({ onLogout }) {
     alert("Clé Gemini sauvegardée avec succès ! L'IA est maintenant active.");
   };
 
-  const handleImageUpload = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage({
-          url: reader.result,
+  const handleImageUpload = async (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      const newImages = [];
+      
+      for (const file of files) {
+        if (selectedImages.length + newImages.length >= 5) {
+          alert("Vous ne pouvez importer que 5 photos maximum.");
+          break;
+        }
+        
+        const base64Url = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+        
+        newImages.push({
+          url: base64Url,
           name: file.name,
           size: file.size
         });
-        setAnalysisResult(null);
-      };
-      reader.readAsDataURL(file);
+      }
+      
+      setSelectedImages((prev) => [...prev, ...newImages].slice(0, 5));
+      setAnalysisResult(null);
+    }
+  };
+
+  const removeImage = (indexToRemove) => {
+    setSelectedImages((prev) => prev.filter((_, index) => index !== indexToRemove));
+    if (selectedImages.length <= 1) {
+      setAnalysisResult(null); // Clear analysis if no images remain
     }
   };
 
@@ -133,9 +153,9 @@ export default function Dashboard({ onLogout }) {
     e.preventDefault();
     if (!newPatientData.name) return;
     
-    const newHistory = analysisResult ? [{
+    const newHistoryEntry = analysisResult ? [{
       date: new Date().toLocaleDateString(),
-      image: selectedImage?.url,
+      images: selectedImages,
       analysis: analysisResult
     }] : [];
 
@@ -149,7 +169,7 @@ export default function Dashboard({ onLogout }) {
       date: "À l'instant",
       status: "Nouveau dossier",
       statusClass: "stable",
-      history: newHistory
+      history: newHistoryEntry
     };
     
     const updatedPatients = [newPatient, ...patients];
@@ -157,7 +177,7 @@ export default function Dashboard({ onLogout }) {
     
     // Si on a sauvegardé une analyse en cours, on l'attache et on vide le dashboard
     if (analysisResult) {
-      setSelectedImage(null);
+      setSelectedImages([]);
       setAnalysisResult(null);
       alert('Analyse sauvegardée dans la nouvelle fiche patient !');
       setActiveTab('patients');
@@ -176,7 +196,7 @@ export default function Dashboard({ onLogout }) {
     const patient = patients[patientIndex];
     const newHistoryEntry = {
       date: new Date().toLocaleDateString(),
-      image: selectedImage?.url,
+      images: selectedImages,
       analysis: analysisResult
     };
     
@@ -191,7 +211,7 @@ export default function Dashboard({ onLogout }) {
     
     setPatients(updatedPatients);
     
-    setSelectedImage(null);
+    setSelectedImages([]);
     setAnalysisResult(null);
     alert(`Analyse ajoutée au dossier de ${patient.name} !`);
     setActiveTab('patients');
@@ -208,8 +228,8 @@ export default function Dashboard({ onLogout }) {
   };
 
   const startAnalysis = async () => {
-    if (!selectedImage) {
-      alert("Veuillez d'abord importer une photo.");
+    if (selectedImages.length === 0) {
+      alert("Veuillez d'abord importer au moins une photo.");
       return;
     }
     if (!geminiKey) {
@@ -263,21 +283,24 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
       // 2. Initialiser Gemini
       const ai = new GoogleGenAI({ apiKey: geminiKey });
       
-      // 3. Préparer l'image en Base64
-      const responseImg = await fetch(selectedImage.url);
-      const blob = await responseImg.blob();
-      const base64data = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(',')[1]);
-        reader.readAsDataURL(blob);
-      });
+      // 3. Préparer toutes les images en Base64
+      const imageParts = await Promise.all(selectedImages.map(async (img) => {
+        const responseImg = await fetch(img.url);
+        const blob = await responseImg.blob();
+        const base64data = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.readAsDataURL(blob);
+        });
+        return { inlineData: { data: base64data, mimeType: blob.type } };
+      }));
 
-      // 4. Appel à l'API Gemini 2.5 Flash
+      // 4. Appel à l'API Gemini 2.5 Flash avec images multiples
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: [
           promptText,
-          { inlineData: { data: base64data, mimeType: blob.type } }
+          ...imageParts
         ],
         config: {
           responseMimeType: "application/json",
@@ -312,16 +335,10 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
         Importez ou prenez une photo directe. L'IA croisera les données visuelles avec vos documents PDF intégrés.
       </p>
       
-      <div className={`scanner-body ${selectedImage ? 'has-photo' : 'no-photo'}`}>
-        <div className={`upload-column glass-panel ${!selectedImage ? 'desktop-only' : ''}`}>
-          <div className="upload-container compact" onClick={() => !selectedImage && fileInputRef.current.click()}>
-            {selectedImage ? (
-              <div className="uploaded-image-wrapper">
-                <button className="remove-photo-btn" onClick={(e) => { e.stopPropagation(); setSelectedImage(null); setAnalysisResult(null); }}>✕</button>
-                <img src={selectedImage.url} alt="Scan preview" className="uploaded-image" />
-                {isAnalyzing && <div className="scan-laser"></div>}
-              </div>
-            ) : (
+      <div className={`scanner-body ${selectedImages.length > 0 ? 'has-photo' : 'no-photo'}`}>
+        {selectedImages.length === 0 && (
+          <div className="upload-column glass-panel desktop-only">
+            <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
               <div className="upload-placeholder">
                 <div className="upload-icon-ring">
                   <span className="upload-icon">
@@ -331,30 +348,9 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
                 <h3>Photo</h3>
                 <span className="upload-subtext">Caméra ou Galerie</span>
               </div>
-            )}
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment" 
-              ref={fileInputRef} 
-              id="photo-upload"
-              style={{ display: 'none' }} 
-              onChange={handleImageUpload} 
-            />
-          </div>
-          {selectedImage && (
-            <div className="upload-actions">
-              <button className="change-photo-btn" onClick={() => fileInputRef.current.click()}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px', verticalAlign: 'middle'}}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                Changer
-              </button>
-              <button className="save-patient-btn" onClick={() => setIsNewPatientModalOpen(true)}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '6px', verticalAlign: 'middle'}}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                Enregistrer
-              </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className={`results-column glass-panel ${!isAnalyzing && !analysisResult ? 'is-empty' : ''}`}>
           {isAnalyzing ? (
@@ -475,23 +471,47 @@ CRUCIAL: Dans les descriptions, mets **BEAUCOUP DE MOTS EN GRAS** (en les entour
         <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
           <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
           
-          <div className="action-row">
-            {!selectedImage && (
-              <div className="small-upload mobile-only" onClick={() => fileInputRef.current.click()}>
-                <div className="upload-placeholder-small">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                  <span>Photo</span>
-                </div>
+          <div className="robot-actions-container">
+            {selectedImages.length > 0 && (
+              <div className="thumbnails-row">
+                {selectedImages.map((img, index) => (
+                  <div key={index} className="thumbnail-wrapper">
+                    <button className="remove-thumbnail-btn" onClick={(e) => { e.stopPropagation(); removeImage(index); }}>✕</button>
+                    <img src={img.url} alt={`Photo ${index + 1}`} className="thumbnail-image" />
+                    {isAnalyzing && <div className="scan-laser-small"></div>}
+                  </div>
+                ))}
               </div>
             )}
-            <button 
-              className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
-              onClick={startAnalysis}
-              disabled={isAnalyzing}
-            >
-              {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
-            </button>
+            
+            <div className="action-row">
+              {(selectedImages.length < 5) && (
+                <div className="small-upload" onClick={() => fileInputRef.current.click()}>
+                  <div className="upload-placeholder-small">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    <span>Photo</span>
+                  </div>
+                </div>
+              )}
+              <button 
+                className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
+                onClick={startAnalysis}
+                disabled={isAnalyzing}
+              >
+                {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
+              </button>
+            </div>
           </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            capture="environment" 
+            multiple
+            ref={fileInputRef} 
+            style={{ display: 'none' }} 
+            onChange={handleImageUpload} 
+          />
         </div>
       </div>
     </div>
