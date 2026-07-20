@@ -691,71 +691,36 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           </div>
         )}
       </div>
+      </div> {/* Closes patients-layout */}
 
       {/* PORTAIL PATIENT MOCKUP (IMMERSION) */}
       {isPortalOpen && selectedPatient && (
-        <div className="portal-modal-overlay">
-          <div className="portal-close-area" onClick={() => setIsPortalOpen(false)}>
-            <button className="portal-close-btn">FERMER L'IMMERSION</button>
-          </div>
-          
-          <div className="phone-mockup animate-slide-up">
-            <div className="phone-notch"></div>
-            <div className="phone-screen">
-              <div className="portal-header">
-                <h2>DermaNova</h2>
-                <span>Espace Patient</span>
-              </div>
-              
-              <div className="portal-content">
-                <div className="portal-greeting">
-                  <h3>Bonjour {selectedPatient.name.split(' ')[0]},</h3>
-                  <p>Voici votre suivi dermatologique personnalisé établi par le Dr. Masini.</p>
-                </div>
+        <div className="patient-portal-fullscreen animate-fade-in" style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
+          background: 'var(--bg-dark)', zIndex: 3000, overflowY: 'auto'
+        }}>
+          <div style={{maxWidth: '900px', margin: '0 auto', padding: '2rem'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem'}}>
+              <h1 style={{fontSize: '2rem', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0}}>DermaNova</h1>
+              <button onClick={() => setIsPortalOpen(false)} style={{background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '0.8rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>Quitter l'immersion</button>
+            </div>
+            
+            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
+              <h2 style={{fontSize: '2.5rem', marginBottom: '1rem'}}>Bonjour {selectedPatient.name.split(' ')[0]}</h2>
+              <p style={{fontSize: '1.2rem', color: 'var(--text-muted)'}}>Bienvenue dans votre espace de téléconsultation sécurisé. Pour assurer le suivi de votre traitement, veuillez procéder à une nouvelle analyse.</p>
+            </div>
 
-                {selectedPatient.history && selectedPatient.history[0] && selectedPatient.history[0].analysis ? (
-                  <>
-                    <div className="portal-card gradient-border">
-                      <h4>Votre dernier bilan</h4>
-                      <div className="portal-metrics">
-                        <div className="portal-metric">
-                          <span>💧</span>
-                          <strong>{selectedPatient.history[0].analysis.hydration}</strong>
-                        </div>
-                        <div className="portal-metric">
-                          <span>🧪</span>
-                          <strong>{selectedPatient.history[0].analysis.ph}</strong>
-                        </div>
-                        <div className="portal-metric">
-                          <span>⚡</span>
-                          <strong>{selectedPatient.history[0].analysis.elasticity}</strong>
-                        </div>
-                      </div>
-                    </div>
+            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem'}}>
+              <button className="start-analysis-btn" style={{width: 'auto', padding: '1rem 2rem', fontSize: '1.2rem'}} onClick={() => {
+                // Just scroll down to the scanner or rely on it being visible
+                window.scrollTo({top: 500, behavior: 'smooth'});
+              }}>
+                Commencer ma téléconsultation
+              </button>
+            </div>
 
-                    <div className="portal-card treatment-card">
-                      <h4>Votre routine de soin</h4>
-                      <ul className="portal-treatments">
-                        {Array.isArray(selectedPatient.history[0].analysis.treatments)
-                          ? selectedPatient.history[0].analysis.treatments.map((t, i) => <li key={i}>{t.title || t}</li>)
-                          : <li>{renderTextWithBold(selectedPatient.history[0].analysis.treatments[0])}</li>
-                        }
-                      </ul>
-                    </div>
-                  </>
-                ) : (
-                  <div className="portal-card">
-                    <p style={{color: '#888'}}>Aucun bilan récent disponible.</p>
-                  </div>
-                )}
-
-                <button className="portal-action-btn">
-                  Faire mon auto-consultation
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                </button>
-              </div>
-              
-              <div className="phone-home-indicator"></div>
+            <div className="portal-scanner-wrapper" style={{marginTop: '3rem', transform: 'scale(1)', transformOrigin: 'top center'}}>
+              {renderScannerCard()}
             </div>
           </div>
         </div>
@@ -763,6 +728,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
     </div>
     );
   };
+
 
   const renderPdfKnowledge = () => (
     <div className="content-card animate-fade-in">
