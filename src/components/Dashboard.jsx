@@ -27,6 +27,7 @@ export default function Dashboard({ onLogout }) {
   });
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isPortalOpen, setIsPortalOpen] = useState(false);
   
   const [pdfs, setPdfs] = useState(() => {
     const saved = localStorage.getItem('dermaNovaPdfs');
@@ -169,6 +170,7 @@ export default function Dashboard({ onLogout }) {
       date: "À l'instant",
       status: "Nouveau dossier",
       statusClass: "stable",
+      portalLink: `https://dermanova.app/p/${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
       history: newHistoryEntry
     };
     
@@ -541,8 +543,8 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         </button>
       </div>
       
-      <div className="patients-layout">
-        <div className="patient-list-column glass-panel" style={{padding: '1.5rem'}}>
+      <div className="patients-layout single-column">
+        <div className="patient-list-column glass-panel" style={{padding: '1.5rem', width: '100%', maxWidth: '800px', margin: '0 auto'}}>
           <input 
             type="text" 
             placeholder="Rechercher un patient..." 
@@ -570,17 +572,25 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             {filteredPatients.length === 0 && <p style={{opacity: 0.5, textAlign: 'center', marginTop: '2rem'}}>Aucun patient trouvé.</p>}
           </div>
         </div>
+      </div>
 
-        <div className="patient-profile-column">
-          {selectedPatient ? (
-            <>
-              <div className="patient-profile-header">
-                <div className="patient-profile-avatar">{selectedPatient.initial}</div>
-                <div>
-                  <h2 style={{fontSize: '1.8rem', marginBottom: '0.5rem'}}>{selectedPatient.name}</h2>
-                  <span className={`status-badge ${selectedPatient.statusClass}`}>{selectedPatient.status}</span>
-                </div>
+      {/* PANNEAU LATÉRAL (DRAWER) */}
+      <div className={`drawer-overlay ${selectedPatient ? 'open' : ''}`} onClick={() => setSelectedPatient(null)}></div>
+      <div className={`patient-drawer glass-panel ${selectedPatient ? 'open' : ''}`}>
+        {selectedPatient && (
+          <div className="drawer-content">
+            <button className="close-drawer-btn" onClick={() => setSelectedPatient(null)}>✕</button>
+            
+            <div className="patient-profile-header">
+              <div className="patient-profile-avatar">{selectedPatient.initial}</div>
+              <div>
+                <h2 style={{fontSize: '1.8rem', marginBottom: '0.5rem'}}>{selectedPatient.name}</h2>
+                <span className={`status-badge ${selectedPatient.statusClass}`}>{selectedPatient.status}</span>
               </div>
+            </div>
+
+            <div className="drawer-section">
+              <h3 className="drawer-section-title">Informations Médicales</h3>
               <div className="patient-profile-details">
                 <div className="profile-field">
                   <label>Âge</label>
@@ -599,80 +609,153 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                   <span>{selectedPatient.phone}</span>
                 </div>
               </div>
-              
-              {selectedPatient.history && selectedPatient.history.length > 0 && (
-                <div className="patient-history">
-                  <h3 style={{marginBottom: '1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px'}}>Dossier Médical & Photos</h3>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem'}}>
-                    {selectedPatient.history.map((h, i) => (
-                      <div key={i} style={{background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--glass-border)'}}>
-                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem'}}>
-                          <span style={{fontSize: '0.9rem', color: 'var(--text-muted)'}}>Consultation du {h.date}</span>
-                        </div>
-                        
-                        <div style={{display: 'flex', gap: '1.5rem', alignItems: 'flex-start'}}>
-                          {h.image && (
-                            <div style={{flexShrink: 0, width: '150px', height: '150px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.2)'}}>
-                              <img src={h.image} alt="Photo patient" style={{width: '100%', height: '100%', objectFit: 'cover'}}/>
-                            </div>
-                          )}
-                          <div style={{flex: 1}}>
-                            {h.analysis ? (
-                              <>
-                                <h4 style={{fontSize: '1rem', color: 'var(--accent-cyan)', marginBottom: '0.5rem'}}>Bilan Biométrique</h4>
-                                <div style={{display: 'flex', gap: '1rem', marginBottom: '1rem', fontSize: '0.9rem'}}>
-                                  <span style={{background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.6rem', borderRadius: '4px'}}>Hydratation: {h.analysis.hydration}</span>
-                                  <span style={{background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.6rem', borderRadius: '4px'}}>pH: {h.analysis.ph}</span>
-                                  <span style={{background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.6rem', borderRadius: '4px'}}>Élasticité: {h.analysis.elasticity}</span>
-                                </div>
-                                
-                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Diagnostic IA</h4>
-                                <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
-                                  {Array.isArray(h.analysis.diagnosis) 
-                                    ? h.analysis.diagnosis.map((d, dIdx) => <div key={dIdx} style={{marginBottom: '0.5rem'}}><strong>{d.title}:</strong> {renderTextWithBold(d.description)}</div>)
-                                    : <p>{renderTextWithBold(h.analysis.diagnosis)}</p>
-                                  }
-                                </div>
+            </div>
 
-                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Traitements Recommandés</h4>
-                                <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
-                                  {Array.isArray(h.analysis.treatments) 
-                                    ? h.analysis.treatments.map((t, tIdx) => <div key={tIdx} style={{marginBottom: '0.5rem'}}><strong>{t.title || t}:</strong> {t.description ? renderTextWithBold(t.description) : ''}</div>)
-                                    : <ul>{h.analysis.treatments && h.analysis.treatments.map((t, idx) => <li key={idx}>{renderTextWithBold(t)}</li>)}</ul>
-                                  }
-                                </div>
-                                
-                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Recommandation Globale</h4>
-                                <p style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0'}}>{renderTextWithBold(h.analysis.recommendation)}</p>
-                              </>
-                            ) : h.diagnosis ? (
-                              <>
-                                <h4 style={{fontSize: '1rem', color: '#fff', marginBottom: '0.5rem'}}>Diagnostic</h4>
-                                <div style={{fontSize: '0.95rem', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '1rem'}}>
-                                  {Array.isArray(h.diagnosis) 
-                                    ? h.diagnosis.map((d, dIdx) => <div key={dIdx}><strong>{d.title}:</strong> {renderTextWithBold(d.description)}</div>)
-                                    : <p>{renderTextWithBold(h.diagnosis)}</p>
-                                  }
-                                </div>
-                              </>
-                            ) : (
-                              <p style={{color: 'var(--text-muted)'}}>Aucune analyse détaillée enregistrée pour cette consultation.</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+            <div className="drawer-section">
+              <h3 className="drawer-section-title">Suivi SMS & Portail</h3>
+              <div className="sms-tracking-container">
+                <div className="sms-info-box">
+                  <div className="sms-link-row">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    <span>Lien sécurisé généré : <strong>{selectedPatient.portalLink || `https://dermanova.app/p/A9K3F`}</strong></span>
+                  </div>
+                  <button className="open-portal-btn" onClick={() => setIsPortalOpen(true)}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    OUVRIR PORTAIL PATIENT
+                  </button>
+                </div>
+
+                <div className="sms-timeline">
+                  <div className="sms-item sent">
+                    <div className="sms-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg></div>
+                    <div className="sms-content">
+                      <strong>J+0 : Lien d'accès généré</strong>
+                      <p>Bonjour {selectedPatient.name}, votre bilan dermatologique est prêt. Accédez à votre suivi sécurisé : {selectedPatient.portalLink || `https://dermanova.app/p/A9K3F`}</p>
+                      <span className="sms-time">Aujourd'hui à 10:45</span>
+                    </div>
+                  </div>
+                  <div className="sms-item pending">
+                    <div className="sms-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                    <div className="sms-content">
+                      <strong>J+7 : Relance de suivi (Programmé)</strong>
+                      <p>Bonjour {selectedPatient.name}, comment évolue votre traitement ? N'hésitez pas à remplir votre auto-consultation via votre lien.</p>
+                      <span className="sms-time">Dans 7 jours</span>
+                    </div>
                   </div>
                 </div>
-              )}
-            </>
-          ) : (
-            <div style={{display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textAlign: 'center'}}>
-              <p>Sélectionnez un patient à gauche pour afficher sa fiche détaillée.</p>
+              </div>
             </div>
-          )}
-        </div>
+
+            {selectedPatient.history && selectedPatient.history.length > 0 && (
+              <div className="drawer-section">
+                <h3 className="drawer-section-title">Historique Clinique</h3>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem'}}>
+                  {selectedPatient.history.map((h, i) => (
+                    <div key={i} className="history-card">
+                      <div className="history-date">Consultation du {h.date}</div>
+                      {h.images && h.images.length > 0 && (
+                        <div className="history-images">
+                          {h.images.map((img, idx) => (
+                            <img key={idx} src={img.url} alt={`Photo patient ${idx}`} className="history-thumb" />
+                          ))}
+                        </div>
+                      )}
+                      
+                      {h.analysis && (
+                        <div className="history-analysis">
+                          <div className="biometrics-chips">
+                            <span>Hydratation: {h.analysis.hydration}</span>
+                            <span>pH: {h.analysis.ph}</span>
+                            <span>Élasticité: {h.analysis.elasticity}</span>
+                          </div>
+                          {h.analysis.diagnosis && (
+                            <div className="history-diagnosis">
+                              <strong>Diagnostic :</strong>
+                              {Array.isArray(h.analysis.diagnosis) 
+                                ? h.analysis.diagnosis.map((d, dIdx) => <div key={dIdx} style={{marginTop: '0.3rem'}}>- {d.title}</div>)
+                                : <p className="truncate-text">{renderTextWithBold(h.analysis.diagnosis)}</p>
+                              }
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* PORTAIL PATIENT MOCKUP (IMMERSION) */}
+      {isPortalOpen && selectedPatient && (
+        <div className="portal-modal-overlay">
+          <div className="portal-close-area" onClick={() => setIsPortalOpen(false)}>
+            <button className="portal-close-btn">FERMER L'IMMERSION</button>
+          </div>
+          
+          <div className="phone-mockup animate-slide-up">
+            <div className="phone-notch"></div>
+            <div className="phone-screen">
+              <div className="portal-header">
+                <h2>DermaNova</h2>
+                <span>Espace Patient</span>
+              </div>
+              
+              <div className="portal-content">
+                <div className="portal-greeting">
+                  <h3>Bonjour {selectedPatient.name.split(' ')[0]},</h3>
+                  <p>Voici votre suivi dermatologique personnalisé établi par le Dr. Masini.</p>
+                </div>
+
+                {selectedPatient.history && selectedPatient.history[0] && selectedPatient.history[0].analysis ? (
+                  <>
+                    <div className="portal-card gradient-border">
+                      <h4>Votre dernier bilan</h4>
+                      <div className="portal-metrics">
+                        <div className="portal-metric">
+                          <span>💧</span>
+                          <strong>{selectedPatient.history[0].analysis.hydration}</strong>
+                        </div>
+                        <div className="portal-metric">
+                          <span>🧪</span>
+                          <strong>{selectedPatient.history[0].analysis.ph}</strong>
+                        </div>
+                        <div className="portal-metric">
+                          <span>⚡</span>
+                          <strong>{selectedPatient.history[0].analysis.elasticity}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="portal-card treatment-card">
+                      <h4>Votre routine de soin</h4>
+                      <ul className="portal-treatments">
+                        {Array.isArray(selectedPatient.history[0].analysis.treatments)
+                          ? selectedPatient.history[0].analysis.treatments.map((t, i) => <li key={i}>{t.title || t}</li>)
+                          : <li>{renderTextWithBold(selectedPatient.history[0].analysis.treatments[0])}</li>
+                        }
+                      </ul>
+                    </div>
+                  </>
+                ) : (
+                  <div className="portal-card">
+                    <p style={{color: '#888'}}>Aucun bilan récent disponible.</p>
+                  </div>
+                )}
+
+                <button className="portal-action-btn">
+                  Faire mon auto-consultation
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </button>
+              </div>
+              
+              <div className="phone-home-indicator"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     );
   };

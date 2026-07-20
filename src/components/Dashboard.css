@@ -1515,6 +1515,477 @@
   color: var(--text-muted);
 }
 
+/* ==========================================================
+   PATIENT DRAWER & SMS TIMELINE
+   ========================================================== */
+.patients-layout.single-column {
+  display: block;
+}
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.patient-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  background: var(--glass-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-left: 1px solid var(--glass-border);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow-y: auto;
+}
+
+.patient-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-content {
+  padding: 2rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.close-drawer-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.close-drawer-btn:hover {
+  background: #ff4757;
+  border-color: #ff4757;
+  transform: rotate(90deg);
+}
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.drawer-section-title {
+  font-size: 1.1rem;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sms-info-box {
+  background: rgba(76, 201, 240, 0.05);
+  border: 1px dashed var(--accent-cyan);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sms-link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.sms-link-row strong {
+  color: var(--accent-cyan);
+  background: rgba(255,255,255,0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.open-portal-btn {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-teal) 100%);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.open-portal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 201, 240, 0.4);
+}
+
+.sms-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  padding-left: 10px;
+}
+
+.sms-timeline::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 16px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sms-item {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+}
+
+.sms-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  margin-top: 3px;
+}
+
+.sms-item.sent .sms-icon {
+  color: var(--accent-cyan);
+  background: var(--bg-dark);
+  box-shadow: 0 0 0 4px var(--bg-dark);
+}
+
+.sms-item.pending .sms-icon {
+  color: #ffbd2e;
+  background: var(--bg-dark);
+  box-shadow: 0 0 0 4px var(--bg-dark);
+}
+
+.sms-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  flex: 1;
+}
+
+.sms-content strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.sms-content p {
+  font-size: 0.85rem;
+  color: #ccc;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.sms-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.history-card {
+  background: rgba(255,255,255,0.05);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+}
+
+.history-date {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.history-images {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.history-thumb {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.biometrics-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.biometrics-chips span {
+  background: rgba(255,255,255,0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.truncate-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ==========================================================
+   PORTAIL PATIENT MOCKUP (IMMERSION)
+   ========================================================== */
+.portal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portal-close-area {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 2001;
+}
+
+.portal-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.portal-close-btn:hover {
+  background: #ff4757;
+  border-color: #ff4757;
+}
+
+.phone-mockup {
+  width: 375px;
+  height: 812px;
+  background: #000;
+  border-radius: 40px;
+  border: 8px solid #333;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 2px #555;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 30px;
+  background: #333;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  z-index: 10;
+}
+
+.phone-screen {
+  background: #121212;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  padding-bottom: 30px;
+}
+
+.portal-header {
+  background: linear-gradient(135deg, rgba(76, 201, 240, 0.1) 0%, rgba(138, 43, 226, 0.1) 100%);
+  padding: 3rem 1.5rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.portal-header h2 {
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.portal-header span {
+  font-size: 0.8rem;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+}
+
+.portal-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.portal-greeting h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.portal-greeting p {
+  font-size: 0.9rem;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.portal-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.portal-card.gradient-border {
+  border: 1px solid var(--accent-cyan);
+  box-shadow: 0 0 15px rgba(76, 201, 240, 0.1);
+}
+
+.portal-card h4 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.portal-metrics {
+  display: flex;
+  justify-content: space-between;
+}
+
+.portal-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.portal-metric span {
+  font-size: 1.5rem;
+}
+
+.portal-metric strong {
+  font-size: 0.9rem;
+  color: var(--accent-cyan);
+}
+
+.portal-treatments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.portal-treatments li {
+  font-size: 0.85rem;
+  color: #ccc;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.portal-treatments li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent-cyan);
+}
+
+.portal-action-btn {
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 20px;
+  padding: 1.2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.phone-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 5px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 10px;
+}
+
 /* Settings */
 .settings-grid {
   display: grid;
