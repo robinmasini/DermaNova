@@ -1541,26 +1541,65 @@
   pointer-events: auto;
 }
 
-.patient-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
+/* Nouveau style pour le bureau sans overlay */
+.patient-drawer-container {
+  position: relative;
   width: 100%;
-  max-width: 500px;
-  height: 100vh;
-  background: var(--glass-bg);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-left: 1px solid var(--glass-border);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-  z-index: 1001;
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  overflow-y: auto;
+  height: 100%;
+  overflow: hidden; /* Empêche le drawer de déborder avant l'animation */
+  display: flex;
+  justify-content: flex-end;
 }
 
-.patient-drawer.open {
-  transform: translateX(0);
+.patient-drawer-desktop {
+  width: 100%;
+  max-width: 500px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes slide-in-right {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 1000px) {
+  .patients-layout {
+    grid-template-columns: 1fr;
+  }
+  .patient-drawer-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+  }
+  .patient-drawer-desktop {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 90%;
+    max-width: 400px;
+    height: 100vh;
+    border-radius: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+  }
 }
 
 .drawer-content {
