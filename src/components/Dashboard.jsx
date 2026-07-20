@@ -28,6 +28,7 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isPortalOpen, setIsPortalOpen] = useState(false);
+  const [isMedicalFileOpen, setIsMedicalFileOpen] = useState(false);
   
   const [pdfs, setPdfs] = useState(() => {
     const saved = localStorage.getItem('dermaNovaPdfs');
@@ -543,6 +544,123 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
   );
 
 
+  const renderMedicalFile = () => {
+    if (!selectedPatient) return null;
+    return (
+      <div className="medical-file-fullscreen animate-fade-in" style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+        <div className="glass-panel" style={{ padding: '2rem', borderRadius: '12px', minHeight: '100%' }}>
+          
+          {/* HEADER */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <button 
+                onClick={() => setIsMedicalFileOpen(false)}
+                className="btn-secondary-clean" 
+                style={{ padding: '0.6rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Retour
+              </button>
+              <div>
+                <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '2rem', color: 'var(--text-light)' }}>{selectedPatient.name}</h1>
+                <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-muted)' }}>
+                  <span><strong style={{color: 'var(--text-light)'}}>ID:</strong> #{selectedPatient.id}</span>
+                  <span><strong style={{color: 'var(--text-light)'}}>Âge:</strong> {selectedPatient.age || 34} ans</span>
+                </div>
+              </div>
+            </div>
+            <button className="btn-primary-clean">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              Modifier
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
+            
+            {/* COLONNE GAUCHE: CONTACT ET INFO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="info-box-clean">
+                <div className="info-label">Contact</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-light)' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    {selectedPatient.phone}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-light)' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    {selectedPatient.email}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-light)' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    14 Avenue des Champs, Paris
+                  </div>
+                </div>
+              </div>
+
+              <div className="info-box-clean">
+                <div className="info-label">Suivi Dermatologique Actuel</div>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <p style={{ margin: '0 0 0.5rem 0', color: 'var(--text-light)' }}><strong>Dernier diagnostic:</strong> Acné Sévère</p>
+                  <p style={{ margin: '0 0 0.5rem 0', color: 'var(--text-light)' }}><strong>Étape:</strong> Traitement J-0</p>
+                  <p style={{ margin: '0', color: 'var(--text-light)' }}><strong>Médecin référent:</strong> Dr. MASINI</p>
+                </div>
+              </div>
+            </div>
+
+            {/* COLONNE DROITE: HISTORIQUE ET TRAITEMENTS */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <div>
+                <h3 style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', margin: '0 0 1rem 0', color: 'var(--text-muted)' }}>Traitement en cours</h3>
+                <div className="exchange-item-clean">
+                  <div className="exchange-icon" style={{ background: 'rgba(255,193,7,0.1)', color: '#ffc107' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  </div>
+                  <div className="exchange-details">
+                    <div className="exchange-title">
+                      <strong>Curacné 20mg / jour</strong>
+                      <span className="exchange-date">Prescrit le 10/05/2026</span>
+                    </div>
+                    <p style={{ margin: '0.5rem 0 0 0', color: 'var(--text-light)', fontSize: '0.9rem' }}>
+                      Poursuivre le traitement hydratant le soir. Rendez-vous de suivi dans 3 mois pour ajustement posologique.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem', margin: '0 0 1rem 0', color: 'var(--text-muted)' }}>Historique des analyses IA</h3>
+                {selectedPatient.history && selectedPatient.history.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {selectedPatient.history.map((h, i) => (
+                      <div key={i} className="info-box-clean" style={{ display: 'flex', flexDirection: 'row', gap: '1.5rem', alignItems: 'center' }}>
+                        {h.image ? (
+                          <img src={h.image} alt="Analyse" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                        ) : (
+                          <div style={{ width: '80px', height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          </div>
+                        )}
+                        <div style={{ flex: 1 }}>
+                          <h4 style={{ margin: '0 0 0.4rem 0', color: 'var(--accent-cyan)' }}>Analyse du {h.date}</h4>
+                          <p style={{ margin: '0', color: 'var(--text-light)', fontSize: '0.9rem' }}>{h.notes || h.text}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-box-clean">
+                    Aucune analyse IA enregistrée pour ce patient.
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderPatientsList = () => {
     const filteredPatients = patients.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -556,7 +674,11 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
       </div>
       
       <div className="patients-layout">
-        <div className="patient-list-column clean-table-panel">
+        {isMedicalFileOpen ? (
+          renderMedicalFile()
+        ) : (
+          <>
+            <div className="patient-list-column clean-table-panel">
           <div className="table-top-bar">
             <div className="table-title">
               <h2>Liste des patients</h2>
@@ -631,7 +753,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             </div>
 
             <div className="drawer-actions-block">
-              <button className="btn-primary-clean">
+              <button className="btn-primary-clean" onClick={() => setIsMedicalFileOpen(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 Accéder au dossier médical
               </button>
@@ -719,7 +841,9 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             <p>Sélectionnez un patient à gauche pour afficher sa fiche détaillée.</p>
           </div>
         )}
-      </div>
+            </div> {/* Closes patient-drawer-container */}
+          </>
+        )}
       </div> {/* Closes patients-layout */}
     </div>
     );
