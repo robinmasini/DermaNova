@@ -538,151 +538,165 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           <h2>Base Patients</h2>
           <p>Gérez vos dossiers médicaux</p>
         </div>
-        <button className="start-analysis-btn" style={{width: 'auto', padding: '0.8rem 1.5rem'}} onClick={() => setIsNewPatientModalOpen(true)}>
-          + Nouveau Patient
-        </button>
       </div>
       
       <div className="patients-layout">
-        <div className="patient-list-column glass-panel" style={{padding: '1.5rem'}}>
-          <input 
-            type="text" 
-            placeholder="Rechercher un patient..." 
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="patient-search-input"
-          />
-          <div className="patient-scroll-area">
+        <div className="patient-list-column clean-table-panel">
+          <div className="table-top-bar">
+            <div className="table-title">
+              <h2>Liste des patients</h2>
+              <span className="patient-count">{filteredPatients.length} patient(s)</span>
+            </div>
+            
+            <div className="table-actions">
+              <div className="search-wrapper">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input 
+                  type="text" 
+                  placeholder="Rechercher un patient..." 
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="patient-search-input-clean"
+                />
+              </div>
+              <button className="filter-btn">Filtre : plus récent</button>
+            </div>
+          </div>
+
+          <div className="table-header-row">
+            <div className="col-patient">PATIENT</div>
+            <div className="col-retour">RETOURS PATIENT</div>
+            <div className="col-etape">ÉTAPE</div>
+            <div className="col-sms">SMS ENVOYÉ</div>
+          </div>
+
+          <div className="patient-scroll-area clean">
             {filteredPatients.map(patient => (
-              <div key={patient.id} className={`patient-list-item ${selectedPatient?.id === patient.id ? 'active' : ''}`} onClick={() => setSelectedPatient(patient)}>
-                <div className="patient-avatar-small">{patient.initial}</div>
-                <div className="patient-info-row">
-                  <h3>{patient.name}</h3>
-                  <span className="patient-age">{patient.age} ans</span>
+              <div key={patient.id} className={`patient-row ${selectedPatient?.id === patient.id ? 'active' : ''}`} onClick={() => setSelectedPatient(patient)}>
+                <div className="col-patient">
+                  <div className="patient-avatar-clean">{patient.initial}</div>
+                  <span className="patient-name-clean">{patient.name}</span>
                 </div>
-                <div className="patient-date">{patient.date}</div>
-                <span className={`status-badge ${patient.statusClass}`}>{patient.status}</span>
-                <button 
-                  className="delete-patient-btn" 
-                  onClick={(e) => { e.stopPropagation(); handleDeletePatient(patient.id); }}
-                  title="Supprimer le patient"
-                >✕</button>
+                <div className="col-retour">
+                  <span className="badge-warning">Bilan en attente</span>
+                </div>
+                <div className="col-etape">
+                  <span className="text-success">J-0</span>
+                </div>
+                <div className="col-sms">
+                  <span className="sms-status-text">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Lien envoyé
+                  </span>
+                </div>
               </div>
             ))}
-            {filteredPatients.length === 0 && <p style={{opacity: 0.5, textAlign: 'center', marginTop: '2rem'}}>Aucun patient trouvé.</p>}
+            {filteredPatients.length === 0 && <p className="empty-table-msg">Aucun patient trouvé.</p>}
           </div>
         </div>
 
       {/* PANNEAU LATÉRAL (DRAWER) CONFINED TO RIGHT COLUMN */}
       <div className="patient-drawer-container">
         {selectedPatient ? (
-          <div className="patient-drawer-desktop glass-panel animate-slide-in-right">
-            <div className="drawer-content">
-              <button className="close-drawer-btn" onClick={() => setSelectedPatient(null)}>✕</button>
-              
-              <div className="patient-profile-header">
-                <div className="patient-profile-avatar">{selectedPatient.initial}</div>
-                <div>
-                  <h2 style={{fontSize: '1.8rem', marginBottom: '0.5rem'}}>{selectedPatient.name}</h2>
-                  <span className={`status-badge ${selectedPatient.statusClass}`}>{selectedPatient.status}</span>
+          <div className="patient-drawer-desktop clean-drawer animate-slide-in-right">
+            <div className="drawer-header-clean">
+              <div className="drawer-title-row">
+                <h2>{selectedPatient.name}</h2>
+                <span className="lang-badge">FR</span>
+              </div>
+              <div className="drawer-actions-top">
+                <button className="icon-btn" title="Modifier"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button>
+                <button className="icon-btn text-danger" title="Supprimer" onClick={() => handleDeletePatient(selectedPatient.id)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                <button className="icon-btn" onClick={() => setSelectedPatient(null)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+              </div>
+            </div>
+            <div className="drawer-subtitle-clean">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Dernière consultation le {selectedPatient.date}
+            </div>
+
+            <div className="drawer-actions-block">
+              <button className="btn-primary-clean">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Accéder au dossier médical
+              </button>
+              <button className="btn-secondary-clean" onClick={() => setIsPortalOpen(true)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                Ouvrir Portail Patient
+              </button>
+              <div className="link-copy-row">
+                <span>Lien direct patient</span>
+                <button className="btn-copy-clean">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Copier
+                </button>
+              </div>
+            </div>
+
+            <div className="drawer-section-clean">
+              <h3>SUIVI DERMATOLOGIQUE</h3>
+              <div className="grid-2-col">
+                <div className="info-box-clean">
+                  <span className="info-label">ÉTAPE</span>
+                  <span className="info-value">J-0</span>
+                </div>
+                <div className="info-box-clean">
+                  <span className="info-label">DERNIER BILAN</span>
+                  <span className="info-value">
+                    {selectedPatient.history && selectedPatient.history[0]?.analysis?.diagnosis 
+                      ? (Array.isArray(selectedPatient.history[0].analysis.diagnosis) ? selectedPatient.history[0].analysis.diagnosis[0].title : "Acné")
+                      : "Non renseigné"}
+                  </span>
                 </div>
               </div>
+              <div className="info-box-clean full-width mt-2">
+                <span className="info-label">TRAITEMENT EN COURS</span>
+                <span className="info-value">
+                  {selectedPatient.history && selectedPatient.history[0]?.analysis?.treatments 
+                    ? "Routine active"
+                    : "Non renseigné"}
+                </span>
+              </div>
+            </div>
 
-              <div className="drawer-section">
-                <h3 className="drawer-section-title">Informations Médicales</h3>
-                <div className="patient-profile-details">
-                  <div className="profile-field">
-                    <label>Âge</label>
-                    <span>{selectedPatient.age} ans</span>
+            <div className="drawer-section-clean">
+              <div className="section-header-row">
+                <h3>PROCHAINS RAPPELS</h3>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </div>
+              <div className="empty-box-clean">
+                Aucun rappel planifié
+              </div>
+            </div>
+
+            <div className="drawer-section-clean">
+              <div className="section-header-row">
+                <h3>DERNIERS ÉCHANGES</h3>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div className="exchange-item-clean">
+                <div className="exchange-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <div className="exchange-details">
+                  <div className="exchange-title">
+                    <strong>SMS patient_portal</strong>
+                    <span className="status-envoye">ENVOYÉ</span>
                   </div>
-                  <div className="profile-field">
-                    <label>Dernière visite</label>
-                    <span>{selectedPatient.date}</span>
-                  </div>
-                  <div className="profile-field">
-                    <label>Email</label>
-                    <span>{selectedPatient.email}</span>
-                  </div>
-                  <div className="profile-field">
-                    <label>Téléphone</label>
-                    <span>{selectedPatient.phone}</span>
-                  </div>
+                  <span className="exchange-date">Aujourd'hui, 10:45</span>
                 </div>
               </div>
+            </div>
 
-              <div className="drawer-section">
-                <h3 className="drawer-section-title">Suivi SMS & Portail</h3>
-                <div className="sms-tracking-container">
-                  <div className="sms-info-box">
-                    <div className="sms-link-row">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                      <span>Lien sécurisé généré : <strong>{selectedPatient.portalLink || `https://dermanova.app/p/A9K3F`}</strong></span>
-                    </div>
-                    <button className="open-portal-btn" onClick={() => setIsPortalOpen(true)}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                      OUVRIR PORTAIL PATIENT
-                    </button>
-                  </div>
-
-                  <div className="sms-timeline">
-                    <div className="sms-item sent">
-                      <div className="sms-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg></div>
-                      <div className="sms-content">
-                        <strong>J+0 : Lien d'accès généré</strong>
-                        <p>Bonjour {selectedPatient.name}, votre bilan dermatologique est prêt. Accédez à votre suivi sécurisé : {selectedPatient.portalLink || `https://dermanova.app/p/A9K3F`}</p>
-                        <span className="sms-time">Aujourd'hui à 10:45</span>
-                      </div>
-                    </div>
-                    <div className="sms-item pending">
-                      <div className="sms-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-                      <div className="sms-content">
-                        <strong>J+7 : Relance de suivi (Programmé)</strong>
-                        <p>Bonjour {selectedPatient.name}, comment évolue votre traitement ? N'hésitez pas à remplir votre auto-consultation via votre lien.</p>
-                        <span className="sms-time">Dans 7 jours</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {selectedPatient.history && selectedPatient.history.length > 0 && (
-                <div className="drawer-section">
-                  <h3 className="drawer-section-title">Historique Clinique</h3>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem'}}>
-                    {selectedPatient.history.map((h, i) => (
-                      <div className="history-card" key={i}>
-                        <div className="history-date">Consultation du {h.date}</div>
-                        {h.images && h.images.length > 0 && (
-                          <div className="history-images">
-                            {h.images.map((img, idx) => (
-                              <img key={idx} src={img.url} alt={`Photo patient ${idx}`} className="history-thumb" />
-                            ))}
-                          </div>
-                        )}
-                        
-                        {h.analysis && (
-                          <div className="history-analysis">
-                            <div className="biometrics-chips">
-                              <span>Hydratation: {h.analysis.hydration}</span>
-                              <span>pH: {h.analysis.ph}</span>
-                              <span>Élasticité: {h.analysis.elasticity}</span>
-                            </div>
-                            {h.analysis.diagnosis && (
-                              <div className="history-diagnosis">
-                                <strong>Diagnostic :</strong>
-                                {Array.isArray(h.analysis.diagnosis) 
-                                  ? h.analysis.diagnosis.map((d, dIdx) => <div key={dIdx} style={{marginTop: '0.3rem'}}>- {d.title}</div>)
-                                  : <p className="truncate-text">{renderTextWithBold(h.analysis.diagnosis)}</p>
-                                }
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+            <div className="drawer-bottom-actions">
+              <button className="btn-bottom">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                Appeler
+              </button>
+              <button className="btn-bottom">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                SMS
+              </button>
             </div>
           </div>
         ) : (
