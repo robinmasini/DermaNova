@@ -734,7 +734,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
         <div className="dashboard-overlay"></div>
-        <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '800px', padding: '2rem'}}>
+        <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '430px', padding: '1rem'}}>
           {renderScannerCard()}
         </div>
       </div>
