@@ -730,30 +730,12 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
     return (
       <div className="patient-portal-fullscreen animate-fade-in" style={{
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
-        background: 'var(--bg-dark)', zIndex: 3000, overflowY: 'auto'
+        backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 3000, overflowY: 'auto',
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        <div style={{maxWidth: '900px', margin: '0 auto', padding: '2rem'}}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem'}}>
-            <h1 style={{fontSize: '2rem', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0}}>DermaNova</h1>
-            <button onClick={() => isStandalonePortal ? window.close() : setIsPortalOpen(false)} style={{background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '0.8rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>Quitter l'immersion</button>
-          </div>
-          
-          <div style={{textAlign: 'center', marginBottom: '3rem'}}>
-            <h2 style={{fontSize: '2.5rem', marginBottom: '1rem'}}>Bonjour {selectedPatient.name.split(' ')[0]}</h2>
-            <p style={{fontSize: '1.2rem', color: 'var(--text-muted)'}}>Bienvenue dans votre espace de téléconsultation sécurisé. Pour assurer le suivi de votre traitement, veuillez procéder à une nouvelle analyse.</p>
-          </div>
-
-          <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem'}}>
-            <button className="start-analysis-btn" style={{width: 'auto', padding: '1rem 2rem', fontSize: '1.2rem'}} onClick={() => {
-              window.scrollTo({top: 500, behavior: 'smooth'});
-            }}>
-              Commencer ma téléconsultation
-            </button>
-          </div>
-
-          <div className="portal-scanner-wrapper" style={{marginTop: '3rem', transform: 'scale(1)', transformOrigin: 'top center'}}>
-            {renderScannerCard()}
-          </div>
+        <div className="dashboard-overlay"></div>
+        <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '800px', padding: '2rem'}}>
+          {renderScannerCard()}
         </div>
       </div>
     );
