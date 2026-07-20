@@ -3,6 +3,9 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 
 function App() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isStandalonePortal = urlParams.get('portal') === 'true';
+
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem('dermaNovaAuth') === 'true';
   });
@@ -19,7 +22,9 @@ function App() {
 
   return (
     <>
-      {isAuthenticated ? (
+      {isStandalonePortal ? (
+        <Dashboard isStandalonePortal={true} />
+      ) : isAuthenticated ? (
         <Dashboard onLogout={handleLogout} />
       ) : (
         <Login onLogin={handleLogin} />

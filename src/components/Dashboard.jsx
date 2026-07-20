@@ -10,7 +10,7 @@ import navbarImg from '../assets/navbar.png';
 // Configuration du worker PDF.js via CDN pour éviter les problèmes de build Vite
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
-export default function Dashboard({ onLogout }) {
+export default function Dashboard({ onLogout, isStandalonePortal }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [resultTab, setResultTab] = useState('diagnostic');
   const [selectedImages, setSelectedImages] = useState([]);
@@ -49,6 +49,21 @@ export default function Dashboard({ onLogout }) {
   useEffect(() => {
     localStorage.setItem('dermaNovaPatients', JSON.stringify(patients));
   }, [patients]);
+
+  // Initialisation du mode portail autonome
+  useEffect(() => {
+    if (isStandalonePortal) {
+      const params = new URLSearchParams(window.location.search);
+      const pid = parseInt(params.get('patientId'));
+      if (pid) {
+        const found = patients.find(p => p.id === pid);
+        if (found) {
+          setSelectedPatient(found);
+          setIsPortalOpen(true);
+        }
+      }
+    }
+  }, [isStandalonePortal, patients]);
 
   useEffect(() => {
     localStorage.setItem('dermaNovaPdfs', JSON.stringify(pdfs));
@@ -620,7 +635,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 Accéder au dossier médical
               </button>
-              <button className="btn-secondary-clean" onClick={() => setIsPortalOpen(true)}>
+              <button className="btn-secondary-clean" onClick={() => window.open(`/?portal=true&patientId=${selectedPatient.id}`, '_blank')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Ouvrir Portail Patient
               </button>
@@ -706,40 +721,41 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         )}
       </div>
       </div> {/* Closes patients-layout */}
+    </div>
+    );
+  };
 
-      {/* PORTAIL PATIENT MOCKUP (IMMERSION) */}
-      {isPortalOpen && selectedPatient && (
-        <div className="patient-portal-fullscreen animate-fade-in" style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
-          background: 'var(--bg-dark)', zIndex: 3000, overflowY: 'auto'
-        }}>
-          <div style={{maxWidth: '900px', margin: '0 auto', padding: '2rem'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem'}}>
-              <h1 style={{fontSize: '2rem', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0}}>DermaNova</h1>
-              <button onClick={() => setIsPortalOpen(false)} style={{background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '0.8rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>Quitter l'immersion</button>
-            </div>
-            
-            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
-              <h2 style={{fontSize: '2.5rem', marginBottom: '1rem'}}>Bonjour {selectedPatient.name.split(' ')[0]}</h2>
-              <p style={{fontSize: '1.2rem', color: 'var(--text-muted)'}}>Bienvenue dans votre espace de téléconsultation sécurisé. Pour assurer le suivi de votre traitement, veuillez procéder à une nouvelle analyse.</p>
-            </div>
+  const renderPatientPortal = () => {
+    if (!selectedPatient) return <div style={{color: 'white', padding: '2rem'}}>Chargement du portail...</div>;
+    return (
+      <div className="patient-portal-fullscreen animate-fade-in" style={{
+        position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
+        background: 'var(--bg-dark)', zIndex: 3000, overflowY: 'auto'
+      }}>
+        <div style={{maxWidth: '900px', margin: '0 auto', padding: '2rem'}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem'}}>
+            <h1 style={{fontSize: '2rem', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0}}>DermaNova</h1>
+            <button onClick={() => isStandalonePortal ? window.close() : setIsPortalOpen(false)} style={{background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '0.8rem 1.5rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>Quitter l'immersion</button>
+          </div>
+          
+          <div style={{textAlign: 'center', marginBottom: '3rem'}}>
+            <h2 style={{fontSize: '2.5rem', marginBottom: '1rem'}}>Bonjour {selectedPatient.name.split(' ')[0]}</h2>
+            <p style={{fontSize: '1.2rem', color: 'var(--text-muted)'}}>Bienvenue dans votre espace de téléconsultation sécurisé. Pour assurer le suivi de votre traitement, veuillez procéder à une nouvelle analyse.</p>
+          </div>
 
-            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem'}}>
-              <button className="start-analysis-btn" style={{width: 'auto', padding: '1rem 2rem', fontSize: '1.2rem'}} onClick={() => {
-                // Just scroll down to the scanner or rely on it being visible
-                window.scrollTo({top: 500, behavior: 'smooth'});
-              }}>
-                Commencer ma téléconsultation
-              </button>
-            </div>
+          <div style={{display: 'flex', justifyContent: 'center', marginBottom: '2rem'}}>
+            <button className="start-analysis-btn" style={{width: 'auto', padding: '1rem 2rem', fontSize: '1.2rem'}} onClick={() => {
+              window.scrollTo({top: 500, behavior: 'smooth'});
+            }}>
+              Commencer ma téléconsultation
+            </button>
+          </div>
 
-            <div className="portal-scanner-wrapper" style={{marginTop: '3rem', transform: 'scale(1)', transformOrigin: 'top center'}}>
-              {renderScannerCard()}
-            </div>
+          <div className="portal-scanner-wrapper" style={{marginTop: '3rem', transform: 'scale(1)', transformOrigin: 'top center'}}>
+            {renderScannerCard()}
           </div>
         </div>
-      )}
-    </div>
+      </div>
     );
   };
 
@@ -848,8 +864,13 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
     </div>
   );
 
+  if (isStandalonePortal) {
+    return renderPatientPortal();
+  }
+
   return (
     <div className="dashboard-container" style={{ backgroundImage: `url(${bgImage})` }}>
+      {isPortalOpen && selectedPatient && renderPatientPortal()}
       <div className="dashboard-overlay"></div>
       
       <div className="dashboard-layout">
