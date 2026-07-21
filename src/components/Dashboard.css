@@ -1651,6 +1651,9 @@
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
   }
+  .patient-drawer-container.is-empty {
+    display: none !important;
+  }
   .patient-drawer-desktop {
     position: absolute;
     top: 0;
@@ -2163,56 +2166,8 @@
 @media (max-width: 768px) {
   .main-sidebar {
     display: none !important;
-  }
-
-  .mobile-top-header {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 1.2rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    z-index: 9999;
-    margin-bottom: 0;
-    z-index: 2000;
-    margin-bottom: 1rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
-
-  .mobile-logo-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .mobile-logo-img {
-    height: 28px;
-    width: auto;
-  }
-
-  .mobile-logo-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #ffffff;
-  }
-
-  .mobile-cta-nouveau {
-    padding: 0.6rem 1.2rem !important;
-    font-size: 0.85rem !important;
-    border-radius: 20px !important;
-    white-space: nowrap;
-    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3) !important;
-  }
-  
   .dashboard-content {
-    padding-top: 80px !important;
+    padding-top: 1rem !important;
     padding-bottom: 110px !important;
   }
 

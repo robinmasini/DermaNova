@@ -846,11 +846,15 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
 
     return (
     <div className="patients-tab animate-fade-in">
-      <div className="tab-header">
+      <div className="tab-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
         <div>
           <h2>Base Patients</h2>
           <p>Gérez vos dossiers médicaux</p>
         </div>
+        <button className="btn-primary-clean" onClick={() => openNewPatientModal('sms')} style={{ padding: '0.8rem 1.5rem', width: '100%', maxWidth: '300px' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: '8px'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Nouveau(elle) patient(e)
+        </button>
       </div>
       
       <div className="patients-layout">
@@ -917,7 +921,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         </div>
 
       {/* PANNEAU LATÉRAL (DRAWER) CONFINED TO RIGHT COLUMN */}
-      <div className="patient-drawer-container">
+      <div className={`patient-drawer-container ${!selectedPatient ? 'is-empty' : ''}`}>
         {selectedPatient ? (
           <div className="patient-drawer-desktop clean-drawer animate-slide-in-right">
             <div className="drawer-header-clean">
@@ -1240,17 +1244,6 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
 
         {/* Contenu principal */}
         <div className="dashboard-content">
-          <header className="mobile-top-header glass-panel">
-            <div className="mobile-logo-brand">
-              <img src={logo} alt="DermaNova" className="mobile-logo-img" />
-              <span className="mobile-logo-title">Derma<strong>Nova</strong></span>
-            </div>
-            <button className="btn-primary-clean mobile-cta-nouveau" onClick={() => openNewPatientModal('sms')}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              Nouveau(elle) patient(e)
-            </button>
-          </header>
-
           <main className="dashboard-main full-height">
             {activeTab === 'dashboard' && (
               <div className="dashboard-grid layout-single">
