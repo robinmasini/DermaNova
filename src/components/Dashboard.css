@@ -1150,12 +1150,14 @@
     max-height: 120px;
   }
 
-  .upload-column.desktop-only {
+  .desktop-only {
     display: none !important;
   }
   
   .results-column {
     order: 2;
+    min-height: 500px;
+    height: auto;
   }
 
   .results-column.is-empty {
@@ -2124,16 +2126,20 @@
   }
 
   .mobile-top-header {
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 1.2rem;
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 9999;
+    margin-bottom: 0;
     z-index: 2000;
     margin-bottom: 1rem;
     border-radius: 16px;
@@ -2158,18 +2164,26 @@
   }
 
   .mobile-cta-nouveau {
-    padding: 0.5rem 1rem !important;
-    font-size: 0.8rem !important;
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.85rem !important;
     border-radius: 20px !important;
     white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3) !important;
   }
   
   .dashboard-content {
+    padding-top: 80px !important;
     padding-bottom: 110px !important;
   }
 
+  .unified-scanner-card {
+    height: auto !important;
+    overflow-y: visible !important;
+    padding: 1rem 0.5rem !important;
+  }
+
   .mobile-navbar {
-    display: flex;
+    display: flex !important;
     position: fixed;
     bottom: 25px;
     left: 7.5%;

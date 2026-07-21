@@ -515,10 +515,12 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
     <div className="unified-scanner-card animate-fade-in">
       <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>ANALYSE <span className="brand-light">DERMATOLOGIQUE</span></h2>
-        <button className="btn-primary-clean" onClick={() => openNewPatientModal('sms')}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          Nouveau(elle) patient(e)
-        </button>
+        {!(isStandalonePortal || isPortalOpen) && (
+          <button className="btn-primary-clean desktop-only" onClick={() => openNewPatientModal('sms')}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Nouveau(elle) patient(e)
+          </button>
+        )}
       </div>
       <p className="card-description">
         Importez ou prenez une photo directe. L'IA croisera les données visuelles avec vos documents PDF intégrés.
