@@ -2243,10 +2243,26 @@
     cursor: pointer;
     background: transparent;
     transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
   }
   
   .mobile-nav-item.active {
     background: transparent;
+  }
+  
+  .mobile-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+    border-radius: 50%;
+    pointer-events: none;
   }
 }
 
