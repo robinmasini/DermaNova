@@ -207,34 +207,42 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 5000;
   animation: fade-in 0.3s ease-out;
+  padding: 1rem;
 }
 
 .modal-content {
-  background: rgba(220, 220, 220, 0.4);
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   padding: 2.5rem;
   border-radius: 24px;
   width: 100%;
-  max-width: 400px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 440px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+}
+
+.unified-modal-clean {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  padding: 2rem !important;
 }
 
 .modal-content h3 {
   margin-top: 0;
   margin-bottom: 1.5rem;
   color: #ffffff;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .modal-form {
@@ -244,10 +252,10 @@
 }
 
 .modal-form input {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #121212;
-  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 0.9rem 1rem;
   border-radius: 12px;
   font-size: 0.95rem;
   outline: none;
@@ -255,31 +263,35 @@
 }
 
 .modal-form input::placeholder {
-  color: #666;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .modal-form input:focus {
   border-color: var(--accent-cyan);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
 }
 
 .modal-select {
   width: 100%;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #121212;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
   padding: 0.8rem 1rem;
   border-radius: 12px;
   font-size: 0.95rem;
   outline: none;
   transition: all 0.3s;
   cursor: pointer;
-  appearance: auto;
+}
+
+.modal-select option {
+  background: #0f172a;
+  color: #ffffff;
 }
 
 .modal-select:focus {
   border-color: var(--accent-cyan);
-  background: rgba(255, 255, 255, 0.9);
 }
 
 .modal-actions {
@@ -294,19 +306,28 @@
   border-radius: 12px;
   cursor: pointer;
   border: none;
-  font-weight: 500;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
 .btn-cancel {
-  background: transparent;
-  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .btn-submit {
-  background: #ffffff;
-  color: #000000;
-  border: 1px solid #ffffff;
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+}
+
+.btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
 }
 
 .btn-submit:hover {
@@ -2092,14 +2113,55 @@
   }
 }
 
-/* Mobile Navbar */
-.mobile-navbar {
+/* Mobile Navbar & Header */
+.mobile-navbar, .mobile-top-header {
   display: none;
 }
 
 @media (max-width: 768px) {
   .main-sidebar {
     display: none !important;
+  }
+
+  .mobile-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    margin-bottom: 1rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .mobile-logo-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .mobile-logo-img {
+    height: 28px;
+    width: auto;
+  }
+
+  .mobile-logo-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .mobile-cta-nouveau {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 20px !important;
+    white-space: nowrap;
   }
   
   .dashboard-content {
