@@ -1236,7 +1236,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
               <div className="dashboard-grid layout-single">
                 {renderScannerCard()}
                 {!(isStandalonePortal || isPortalOpen) && (
-                  <div style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '1000px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
+                  <div style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '1000px' }}>
                     <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} />
                     <a 
                       href="/?portal=true" 
