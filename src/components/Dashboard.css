@@ -1653,6 +1653,13 @@
   }
   .patient-drawer-container.is-empty {
     display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    background: transparent !important;
+  }
+  .patient-drawer-container.is-empty * {
+    display: none !important;
   }
   .patient-drawer-desktop {
     position: absolute;

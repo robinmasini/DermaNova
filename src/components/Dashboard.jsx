@@ -921,7 +921,10 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         </div>
 
       {/* PANNEAU LATÉRAL (DRAWER) CONFINED TO RIGHT COLUMN */}
-      <div className={`patient-drawer-container ${!selectedPatient ? 'is-empty' : ''}`}>
+      <div 
+        className={`patient-drawer-container ${!selectedPatient ? 'is-empty' : ''}`}
+        style={!selectedPatient && window.innerWidth <= 1000 ? { display: 'none' } : {}}
+      >
         {selectedPatient ? (
           <div className="patient-drawer-desktop clean-drawer animate-slide-in-right">
             <div className="drawer-header-clean">
