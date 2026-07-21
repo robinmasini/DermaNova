@@ -1233,7 +1233,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         <div className="dashboard-content">
           <main className="dashboard-main full-height">
             {activeTab === 'dashboard' && (
-              <div className="dashboard-grid layout-single">
+              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'center' }}>
                 {renderScannerCard()}
                 {!(isStandalonePortal || isPortalOpen) && (
                   <div style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '1000px' }}>
