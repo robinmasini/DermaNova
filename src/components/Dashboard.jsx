@@ -1046,19 +1046,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '1rem 0'
       }}>
         <div className="dashboard-overlay"></div>
-        <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '480px', padding: '0 1rem'}}>
-          <div className="portal-mobile-header glass-panel" style={{ padding: '1rem', borderRadius: '16px', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.15)', background: 'var(--glass-bg)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <img src={logo} alt="DermaNova" style={{ height: '28px' }} />
-                <span style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff' }}>Derma<strong style={{ color: 'var(--accent-cyan)' }}>Nova</strong></span>
-              </div>
-              <span className="badge-warning" style={{ fontSize: '0.75rem' }}>PORTAIL PATIENT</span>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-light)', lineHeight: '1.4' }}>
-              Espace sécurisé de <strong>{activePatient.name}</strong>. Prenez ou importez une photo pour votre bilan dermatologique.
-            </p>
-          </div>
+        <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '480px', padding: '0 1rem', paddingTop: '1rem'}}>
           {renderScannerCard()}
         </div>
       </div>
