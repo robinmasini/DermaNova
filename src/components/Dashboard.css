@@ -219,7 +219,7 @@
 }
 
 .modal-content {
-  background: rgba(15, 23, 42, 0.92);
+  background: var(--glass-bg);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   padding: 2.5rem;
@@ -232,7 +232,7 @@
 }
 
 .unified-modal-clean {
-  background: rgba(15, 23, 42, 0.95) !important;
+  background: var(--glass-bg) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   padding: 2rem !important;
 }
@@ -274,7 +274,7 @@
 
 .modal-select {
   width: 100%;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   padding: 0.8rem 1rem;
@@ -286,7 +286,7 @@
 }
 
 .modal-select option {
-  background: #0f172a;
+  background: var(--bg-dark);
   color: #ffffff;
 }
 
@@ -2130,7 +2130,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 1.2rem;
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -2215,7 +2215,7 @@
    ========================================================== */
 
 .clean-table-panel {
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border-radius: 12px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
@@ -2381,7 +2381,7 @@
 
 /* DRAWER REDESIGN */
 .clean-drawer {
-  background: rgba(15, 23, 42, 0.85) !important;
+  background: var(--glass-bg) !important;
   backdrop-filter: blur(25px);
   color: var(--text-light);
   border-radius: 20px;

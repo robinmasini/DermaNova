@@ -1028,7 +1028,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
       }}>
         <div className="dashboard-overlay"></div>
         <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '480px', padding: '0 1rem'}}>
-          <div className="portal-mobile-header glass-panel" style={{ padding: '1rem', borderRadius: '16px', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(15,23,42,0.6)' }}>
+          <div className="portal-mobile-header glass-panel" style={{ padding: '1rem', borderRadius: '16px', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.15)', background: 'var(--glass-bg)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <img src={logo} alt="DermaNova" style={{ height: '28px' }} />
