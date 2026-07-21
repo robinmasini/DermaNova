@@ -2173,6 +2173,7 @@
 @media (max-width: 768px) {
   .main-sidebar {
     display: none !important;
+  }
   .dashboard-content {
     padding-top: 1rem !important;
     padding-bottom: 110px !important;
