@@ -41,10 +41,30 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
 
   const [isNewPatientModalOpen, setIsNewPatientModalOpen] = useState(false);
   const [newPatientTab, setNewPatientTab] = useState('sms'); // 'sms' ou 'create'
-  const [newPatientData, setNewPatientData] = useState({ name: '', age: '', email: '', phone: '' });
+  const [newPatientData, setNewPatientData] = useState({ name: '', age: '', email: '', phoneRaw: '', phoneCountry: '+33' });
 
   const [isSmsModalOpen, setIsSmsModalOpen] = useState(false);
-  const [smsPhone, setSmsPhone] = useState('+33');
+  const [smsPhoneRaw, setSmsPhoneRaw] = useState('');
+  const [smsPhoneCountry, setSmsPhoneCountry] = useState('+33');
+
+  const PHONE_COUNTRIES = [
+    { code: '+33', flag: '🇫🇷' },
+    { code: '+44', flag: '🇬🇧' },
+    { code: '+32', flag: '🇧🇪' },
+    { code: '+31', flag: '🇳🇱' },
+    { code: '+34', flag: '🇪🇸' },
+    { code: '+39', flag: '🇮🇹' },
+  ];
+
+  const formatPhoneDigits = (val) => {
+    const digits = val.replace(/\\D/g, '');
+    let formatted = '';
+    for (let i = 0; i < digits.length; i++) {
+      if (i > 0 && i % 2 === 0) formatted += ' ';
+      formatted += digits[i];
+    }
+    return formatted.trim();
+  };
 
   const [isPdfUploading, setIsPdfUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -243,7 +263,7 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
       name: newPatientData.name,
       age: newPatientData.age || 0,
       email: newPatientData.email || 'Non renseigné',
-      phone: newPatientData.phone || 'Non renseigné',
+      phone: newPatientData.phoneRaw ? `${newPatientData.phoneCountry} ${newPatientData.phoneRaw}` : 'Non renseigné',
       date: "À l'instant",
       status: "Nouveau dossier",
       statusClass: "stable",
@@ -264,7 +284,7 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
     }
     
     setIsNewPatientModalOpen(false);
-    setNewPatientData({ name: '', age: '', email: '', phone: '' });
+    setNewPatientData({ name: '', age: '', email: '', phoneRaw: '', phoneCountry: '+33' });
   };
 
   const handleSaveToExistingPatient = (patientIdStr) => {
@@ -307,23 +327,18 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
   };
 
   const handleSmsPhoneChange = (e) => {
-    let val = e.target.value;
-    if (!val.startsWith('+33')) {
-      val = '+33' + val.replace(/^\+?3?3?/, '');
-    }
-    // Remove '0' immediately after '+33'
-    if (val.startsWith('+330')) {
-      val = '+33' + val.substring(4);
-    }
-    setSmsPhone(val);
+    setSmsPhoneRaw(formatPhoneDigits(e.target.value));
   };
 
   const handleSendSms = (e) => {
     e.preventDefault();
-    if (smsPhone.length < 10) return;
-    alert(`Un SMS contenant le lien du portail patient a été envoyé au ${smsPhone}.`);
+    const cleanPhone = smsPhoneRaw.replace(/\s/g, '');
+    if (cleanPhone.length < 9) return;
+    alert(`Un SMS contenant le lien du portail patient a été envoyé au ${smsPhoneCountry} ${smsPhoneRaw}.`);
     setIsSmsModalOpen(false);
-    setSmsPhone('+33');
+    setIsNewPatientModalOpen(false);
+    setSmsPhoneRaw('');
+    setSmsPhoneCountry('+33');
   };
 
   const startAnalysis = async () => {
@@ -1303,14 +1318,25 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                   Un SMS lui sera envoyé contenant le lien sécurisé vers son portail de diagnostic dermatologique autonome.
                 </p>
                 <form onSubmit={handleSendSms} className="modal-form">
-                  <input 
-                    type="tel" 
-                    placeholder="Numéro de téléphone (+33...)" 
-                    value={smsPhone}
-                    onChange={handleSmsPhoneChange}
-                    autoFocus
-                    required
-                  />
+                  <div className="phone-input-group">
+                    <select 
+                      className="phone-country-select" 
+                      value={smsPhoneCountry}
+                      onChange={(e) => setSmsPhoneCountry(e.target.value)}
+                    >
+                      {PHONE_COUNTRIES.map(c => (
+                        <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                      ))}
+                    </select>
+                    <input 
+                      type="tel" 
+                      placeholder="6 12 34 56 78" 
+                      value={smsPhoneRaw}
+                      onChange={handleSmsPhoneChange}
+                      autoFocus
+                      required
+                    />
+                  </div>
                   <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
                     <button type="button" className="btn-cancel" onClick={() => { setIsNewPatientModalOpen(false); setIsSmsModalOpen(false); }}>Annuler</button>
                     <button type="submit" className="btn-submit" style={{ flex: 1 }}>Envoyer le lien par SMS</button>
@@ -1359,12 +1385,23 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                     value={newPatientData.email}
                     onChange={e => setNewPatientData({...newPatientData, email: e.target.value})}
                   />
-                  <input 
-                    type="tel" 
-                    placeholder="Téléphone (+33...)" 
-                    value={newPatientData.phone}
-                    onChange={e => setNewPatientData({...newPatientData, phone: e.target.value})}
-                  />
+                  <div className="phone-input-group">
+                    <select 
+                      className="phone-country-select" 
+                      value={newPatientData.phoneCountry}
+                      onChange={(e) => setNewPatientData({...newPatientData, phoneCountry: e.target.value})}
+                    >
+                      {PHONE_COUNTRIES.map(c => (
+                        <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                      ))}
+                    </select>
+                    <input 
+                      type="tel" 
+                      placeholder="6 12 34 56 78" 
+                      value={newPatientData.phoneRaw}
+                      onChange={e => setNewPatientData({...newPatientData, phoneRaw: formatPhoneDigits(e.target.value)})}
+                    />
+                  </div>
                   <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
                     <button type="button" className="btn-cancel" onClick={() => { setIsNewPatientModalOpen(false); setIsSmsModalOpen(false); }}>Annuler</button>
                     <button type="submit" className="btn-submit" style={{ flex: 1 }}>Enregistrer la fiche</button>
