@@ -1235,27 +1235,6 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             {activeTab === 'dashboard' && (
               <div className="dashboard-grid layout-single">
                 {renderScannerCard()}
-                {!(isStandalonePortal || isPortalOpen) && (
-                  <div style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '1000px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-                    <img src="/cta.png" alt="OrthoMind CTA" style={{ width: '100%', display: 'block' }} />
-                    <a 
-                      href="/?portal=true" 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        position: 'absolute',
-                        bottom: '10%',
-                        left: '6%',
-                        width: '30%',
-                        height: '20%',
-                        cursor: 'pointer',
-                        display: 'block',
-                        zIndex: 10
-                      }}
-                      title="Allons-y !"
-                    ></a>
-                  </div>
-                )}
               </div>
             )}
             
