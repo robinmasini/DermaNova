@@ -528,11 +528,11 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
 
   const renderScannerCard = () => (
     <div className="unified-scanner-card animate-fade-in">
-      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="card-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
         <h2>ANALYSE <span className="brand-light">DERMATOLOGIQUE</span></h2>
         {!(isStandalonePortal || isPortalOpen) && (
-          <button className="btn-primary-clean desktop-only" onClick={() => openNewPatientModal('sms')}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <button className="btn-primary-clean" onClick={() => openNewPatientModal('sms')} style={{ padding: '0.8rem 1.5rem', width: '100%', maxWidth: '300px' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: '8px'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Nouveau(elle) patient(e)
           </button>
         )}
@@ -1056,8 +1056,12 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
 
   const renderPdfKnowledge = () => (
     <div className="content-card animate-fade-in">
-      <div className="card-header">
+      <div className="card-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
         <h2>CONNAISSANCES <span className="brand-light">PDF & IA</span></h2>
+        <button className="btn-primary-clean" onClick={() => openNewPatientModal('sms')} style={{ padding: '0.8rem 1.5rem', width: '100%', maxWidth: '300px' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: '8px'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Nouveau(elle) patient(e)
+        </button>
       </div>
       <p className="card-description">
         Importez vos ouvrages. L'IA va réellement les lire (extraction de texte) et s'en servir comme base de vérité pour chaque diagnostic.
@@ -1109,8 +1113,12 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
 
   const renderSettings = () => (
     <div className="glass-panel content-card animate-fade-in">
-      <div className="card-header">
+      <div className="card-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
         <h2>PARAMÈTRES <span className="brand-light">SYSTÈME & IA</span></h2>
+        <button className="btn-primary-clean" onClick={() => openNewPatientModal('sms')} style={{ padding: '0.8rem 1.5rem', width: '100%', maxWidth: '300px' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: '8px'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Nouveau(elle) patient(e)
+        </button>
       </div>
       <p className="card-description">
         Configurez votre clinique et connectez le moteur d'Intelligence Artificielle.
