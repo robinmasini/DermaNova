@@ -904,12 +904,20 @@
   min-height: 400px; /* Reduced from 480px to save vertical space */
 }
 
-.scanner-body.has-photo {
-  grid-template-columns: 1fr 320px; /* 2 columns when photos are present */
+.scanner-body.no-photo {
+  grid-template-columns: 1fr 1fr; /* 2 columns when empty */
 }
 
-.scanner-body.no-photo {
-  grid-template-columns: 280px 1fr 320px; /* 3 columns when empty */
+.scanner-body.no-photo.has-results {
+  grid-template-columns: 280px 1fr 320px; /* 3 columns when no-photo but results shown */
+}
+
+.scanner-body.has-photo {
+  grid-template-columns: 1fr; /* 1 column when photo present but no results (robot centered) */
+}
+
+.scanner-body.has-photo.has-results {
+  grid-template-columns: 1fr 320px; /* 2 columns when photo & results shown */
 }
 
 /* Robot & CTA */

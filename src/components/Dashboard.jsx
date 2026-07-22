@@ -541,7 +541,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         Importez ou prenez une photo directe. L'IA croisera les données visuelles avec vos documents PDF intégrés.
       </p>
       
-      <div className={`scanner-body ${selectedImages.length > 0 ? 'has-photo' : 'no-photo'}`}>
+      <div className={`scanner-body ${selectedImages.length > 0 ? 'has-photo' : 'no-photo'} ${isAnalyzing || analysisResult ? 'has-results' : ''}`}>
         {selectedImages.length === 0 && (
           <div className="upload-column glass-panel desktop-only">
             <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
@@ -558,8 +558,9 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           </div>
         )}
 
-        <div className={`results-column glass-panel ${!isAnalyzing && !analysisResult ? 'is-empty' : ''}`} ref={resultsRef}>
-          {isAnalyzing ? (
+        {(isAnalyzing || analysisResult) && (
+          <div className={`results-column glass-panel`} ref={resultsRef}>
+            {isAnalyzing ? (
             <div className="analyzing-state">
               <div className="spinner"></div>
               <p className="scanning-text">Analyse multimodale IA en cours...</p>
@@ -664,15 +665,8 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                 </div>
               )}
             </div>
-          ) : (
-            <div className="waiting-state">
-              <span className="waiting-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
-              </span>
-              <p>L'analyse détaillée du patient apparaîtra ici.</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
           <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
