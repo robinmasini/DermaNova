@@ -896,28 +896,55 @@
   color: #e0e0e0;
 }
 
-/* Scanner Body Grid */
 .scanner-body {
   display: grid;
   gap: 2rem;
   align-items: stretch;
-  min-height: 400px; /* Reduced from 480px to save vertical space */
+  min-height: 400px;
+  grid-template-columns: 1fr 1fr; /* Default to 2 columns */
+  grid-template-rows: auto auto;
 }
 
-.scanner-body.no-photo {
-  grid-template-columns: 1fr 1fr; /* 2 columns when empty */
+.scanner-body.has-results {
+  grid-template-columns: 280px 1fr 320px; /* 3 columns when results appear */
 }
 
-.scanner-body.no-photo.has-results {
-  grid-template-columns: 280px 1fr 320px; /* 3 columns when no-photo but results shown */
+.upload-column {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.robot-side {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.results-column {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
+.dashboard-cta-container {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  margin-top: 0 !important;
 }
 
 .scanner-body.has-photo {
-  grid-template-columns: 1fr; /* 1 column when photo present but no results (robot centered) */
+  grid-template-columns: 1fr 320px;
 }
 
-.scanner-body.has-photo.has-results {
-  grid-template-columns: 1fr 320px; /* 2 columns when photo & results shown */
+.scanner-body.has-photo .robot-side {
+  grid-column: 1;
+}
+
+.scanner-body.has-photo .results-column {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.scanner-body.has-photo .dashboard-cta-container {
+  grid-column: 1;
 }
 
 /* Robot & CTA */

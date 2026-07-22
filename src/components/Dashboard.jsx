@@ -557,16 +557,82 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             </div>
           </div>
         )}
+        
+        <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
+          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
+          
+          <div className="robot-actions-container">
+            {selectedImages.length > 0 && (
+              <div className="thumbnails-row">
+                {selectedImages.map((img, index) => (
+                  <div key={index} className="thumbnail-wrapper">
+                    <button className="remove-thumbnail-btn" onClick={(e) => { e.stopPropagation(); removeImage(index); }}>✕</button>
+                    <img src={img.url} alt={`Photo ${index + 1}`} className="thumbnail-image" />
+                    {isAnalyzing && <div className="scan-laser-small"></div>}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="action-row" style={{ justifyContent: 'center', position: 'relative' }}>
+              {(selectedImages.length < 5) && (
+                <div className="small-upload" style={{ position: 'absolute', left: '0' }} onClick={() => fileInputRef.current.click()}>
+                  <div className="upload-placeholder-small">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    <span>Photo</span>
+                  </div>
+                </div>
+              )}
+              <button 
+                className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
+                onClick={startAnalysis}
+                disabled={isAnalyzing}
+              >
+                {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
+              </button>
+            </div>
+          </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            capture="environment" 
+            multiple
+            ref={fileInputRef} 
+            style={{ display: 'none' }} 
+            onChange={handleImageUpload} 
+          />
+        </div>
+
+        <div className="dashboard-cta-container">
+          <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} />
+          <a 
+            href="/?portal=true" 
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              position: 'absolute',
+              bottom: '10%',
+              left: '5%',
+              width: '35%',
+              height: '25%',
+              cursor: 'pointer',
+              display: 'block',
+              zIndex: 10
+            }}
+            title="Allons-y !"
+          ></a>
+        </div>
 
         {(isAnalyzing || analysisResult) && (
           <div className={`results-column glass-panel`} ref={resultsRef}>
             {isAnalyzing ? (
-            <div className="analyzing-state">
-              <div className="spinner"></div>
-              <p className="scanning-text">Analyse multimodale IA en cours...</p>
-            </div>
-          ) : analysisResult ? (
-            <div className="analysis-results animate-fade-in">
+              <div className="analyzing-state">
+                <div className="spinner"></div>
+                <p className="scanning-text">Analyse multimodale IA en cours...</p>
+              </div>
+            ) : analysisResult ? (
+              <div className="analysis-results animate-fade-in">
               <div className="result-tabs">
                 <button 
                   className={`result-tab ${resultTab === 'diagnostic' ? 'active' : ''}`}
@@ -600,18 +666,32 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                       <span className="metric-value">{analysisResult.ph}</span>
                     </div>
                     <div className="metric-box">
-                      <div className="metric-icon" style={{marginBottom: '0.8rem', color: '#ffbd2e'}}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                      <div className="metric-icon" style={{marginBottom: '0.8rem', color: 'var(--accent-purple)'}}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="6.5"></line></svg>
                       </div>
-                      <span className="metric-label">ÉLASTICITÉ</span>
-                      <span className="metric-value">{analysisResult.elasticity}</span>
+                      <span className="metric-label">SÉBUM</span>
+                      <span className="metric-value">{analysisResult.sebum}</span>
+                    </div>
+                    <div className="metric-box">
+                      <div className="metric-icon" style={{marginBottom: '0.8rem', color: 'var(--accent-gold)'}}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                      </div>
+                      <span className="metric-label">ÉRYTHÈME</span>
+                      <span className="metric-value">{analysisResult.erythema}</span>
                     </div>
                   </div>
                   
                   <div className="aging-analysis">
-                    <h4>VIEILLISSEMENT CUTANÉ</h4>
+                    <h4>ANALYSE DU VIEILLISSEMENT</h4>
                     <div className="aging-stats">
-                      <div className="aging-stat"><span>Score</span><strong>{analysisResult.aging}</strong></div>
+                      <div className="aging-stat">
+                        <span>Âge estimé (IA)</span>
+                        <strong>{analysisResult.estimatedAge} ans</strong>
+                      </div>
+                      <div className="aging-stat" style={{textAlign: 'right'}}>
+                        <span>Âge réel</span>
+                        <strong>{analysisResult.realAge} ans</strong>
+                      </div>
                     </div>
                     <div className="structured-content">
                       {Array.isArray(analysisResult.agingDetails) ? analysisResult.agingDetails.map((item, idx) => (
@@ -665,54 +745,9 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                 </div>
               )}
             </div>
-          </div>
-        )}
-
-        <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
-          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
-          
-          <div className="robot-actions-container">
-            {selectedImages.length > 0 && (
-              <div className="thumbnails-row">
-                {selectedImages.map((img, index) => (
-                  <div key={index} className="thumbnail-wrapper">
-                    <button className="remove-thumbnail-btn" onClick={(e) => { e.stopPropagation(); removeImage(index); }}>✕</button>
-                    <img src={img.url} alt={`Photo ${index + 1}`} className="thumbnail-image" />
-                    {isAnalyzing && <div className="scan-laser-small"></div>}
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <div className="action-row">
-              {(selectedImages.length < 5) && (
-                <div className="small-upload" onClick={() => fileInputRef.current.click()}>
-                  <div className="upload-placeholder-small">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                    <span>Photo</span>
-                  </div>
-                </div>
-              )}
-              <button 
-                className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
-                onClick={startAnalysis}
-                disabled={isAnalyzing}
-              >
-                {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
-              </button>
-            </div>
-          </div>
-          
-          <input 
-            type="file" 
-            accept="image/*" 
-            capture="environment" 
-            multiple
-            ref={fileInputRef} 
-            style={{ display: 'none' }} 
-            onChange={handleImageUpload} 
-          />
+          ) : null}
         </div>
+        )}
       </div>
     </div>
   );
@@ -1227,27 +1262,8 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         <div className="dashboard-content">
           <main className="dashboard-main full-height">
             {activeTab === 'dashboard' && (
-              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '2rem' }}>
+              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: 'auto', minHeight: '100%', paddingTop: '1rem', paddingBottom: '2rem' }}>
                 {renderScannerCard()}
-                <div className="dashboard-cta-container" style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '600px' }}>
-                    <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} />
-                    <a 
-                      href="/?portal=true" 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        position: 'absolute',
-                        bottom: '10%',
-                        left: '5%',
-                        width: '35%',
-                        height: '25%',
-                        cursor: 'pointer',
-                        display: 'block',
-                        zIndex: 10
-                      }}
-                      title="Allons-y !"
-                    ></a>
-                  </div>
               </div>
             )}
             
