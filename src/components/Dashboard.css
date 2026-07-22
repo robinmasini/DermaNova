@@ -928,7 +928,7 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
-  transform-origin: top right;
+  transform-origin: top center;
   transform: scale(1.09);
 }
 
@@ -2239,7 +2239,7 @@
   .dashboard-cta-container {
     width: 100%;
     margin: 1rem 0;
-    transform-origin: top right;
+    transform-origin: top center;
     transform: scale(1.09);
   }
 
