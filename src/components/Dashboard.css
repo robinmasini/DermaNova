@@ -1193,6 +1193,23 @@
   transition: all 0.3s;
 }
 
+.desktop-hidden {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-hidden {
+    display: flex !important;
+  }
+  .action-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  .start-analysis-btn {
+    width: 100%;
+  }
+}
+
 .small-upload:hover {
   border-color: var(--accent-cyan);
   background: rgba(76, 201, 240, 0.1);
@@ -1218,7 +1235,11 @@
   .robot-side {
     order: -1;
     min-height: auto;
-    padding: 1rem;
+    padding: 0.5rem; /* Reduced padding to enlarge the button */
+  }
+  
+  .dashboard-cta-container {
+    padding: 0 0.5rem; /* Added padding to align exactly with the button */
   }
 
   .robot-image {

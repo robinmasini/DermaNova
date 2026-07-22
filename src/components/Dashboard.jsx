@@ -574,9 +574,9 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
               </div>
             )}
             
-            <div className="action-row" style={{ justifyContent: 'center', position: 'relative' }}>
+            <div className="action-row" style={{ width: '100%' }}>
               {(selectedImages.length < 5) && (
-                <div className="small-upload" style={{ position: 'absolute', left: '0' }} onClick={() => fileInputRef.current.click()}>
+                <div className={`small-upload ${selectedImages.length === 0 ? 'desktop-hidden' : ''}`} onClick={() => fileInputRef.current.click()}>
                   <div className="upload-placeholder-small">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     <span>Photo</span>
@@ -604,7 +604,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           />
         </div>
 
-        <div className="dashboard-cta-container">
+        <div className="dashboard-cta-container" style={{ position: 'relative' }}>
           <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} />
           <a 
             href="/?portal=true" 
