@@ -928,7 +928,8 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
-  transform: scale(1.05); /* Slightly increase the size as requested */
+  transform-origin: bottom left;
+  transform: scale(1.07);
 }
 
 .scanner-body.has-photo {
@@ -2238,7 +2239,8 @@
   .dashboard-cta-container {
     width: 100%;
     margin: 1rem 0;
-    transform: scale(1.05); /* Slightly increase the size as requested */
+    transform-origin: bottom left;
+    transform: scale(1.07);
   }
 
   .mobile-navbar {
