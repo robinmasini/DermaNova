@@ -928,7 +928,6 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
-  transform: scale(1.12); /* Re-scale CTA to compensate for baked-in transparent pixels in the new image */
 }
 
 .scanner-body.has-photo {
@@ -2236,7 +2235,8 @@
   }
   
   .dashboard-cta-container {
-    transform: scale(1.12); /* Re-scale CTA to compensate for baked-in transparent pixels in the new image */
+    width: 100%;
+    margin: 1rem 0;
   }
 
   .mobile-navbar {
