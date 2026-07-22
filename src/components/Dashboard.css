@@ -928,6 +928,7 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
+  transform: scale(1.12); /* Re-scale CTA to compensate for baked-in transparent pixels in the new image */
 }
 
 .scanner-body.has-photo {
@@ -2225,14 +2226,17 @@
     display: none !important;
   }
   .dashboard-content {
-    padding-top: 1rem !important;
-    padding-bottom: 110px !important;
+    padding: 1rem 1rem 110px 1rem !important; /* Symmetric padding on mobile! */
   }
 
   .unified-scanner-card {
     height: auto !important;
     overflow-y: visible !important;
-    padding: 1rem 1.5rem !important; /* Increased horizontal padding to prevent rubbing on left/right edges */
+    padding: 1rem !important;
+  }
+  
+  .dashboard-cta-container {
+    transform: scale(1.12); /* Re-scale CTA to compensate for baked-in transparent pixels in the new image */
   }
 
   .mobile-navbar {
