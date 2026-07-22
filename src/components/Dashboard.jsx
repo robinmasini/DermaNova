@@ -1227,10 +1227,9 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         <div className="dashboard-content">
           <main className="dashboard-main full-height">
             {activeTab === 'dashboard' && (
-              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'center' }}>
+              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '2rem' }}>
                 {renderScannerCard()}
-                {!(isStandalonePortal || isPortalOpen) && (
-                  <div style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '600px' }}>
+                <div className="dashboard-cta-container" style={{ marginTop: '2rem', position: 'relative', width: '100%', maxWidth: '600px' }}>
                     <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} />
                     <a 
                       href="/?portal=true" 
@@ -1249,7 +1248,6 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                       title="Allons-y !"
                     ></a>
                   </div>
-                )}
               </div>
             )}
             
