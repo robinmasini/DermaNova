@@ -928,6 +928,7 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
+  transform: scale(1.04);
 }
 
 .scanner-body.has-photo {
@@ -1235,11 +1236,12 @@
   .robot-side {
     order: -1;
     min-height: auto;
-    padding: 0.5rem; /* Reduced padding to enlarge the button */
+    padding: 1rem;
   }
   
   .dashboard-cta-container {
-    padding: 0 0.5rem; /* Added padding to align exactly with the button */
+    transform: scale(1.12); /* Enlarge visually to match button if image has built-in padding */
+    margin: 1.5rem 0;
   }
 
   .robot-image {
