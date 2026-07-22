@@ -928,7 +928,6 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
-  transform: scale(1.04);
 }
 
 .scanner-body.has-photo {
@@ -1202,13 +1201,6 @@
   .desktop-hidden {
     display: flex !important;
   }
-  .action-row {
-    flex-direction: column;
-    align-items: center;
-  }
-  .start-analysis-btn {
-    width: 100%;
-  }
 }
 
 .small-upload:hover {
@@ -1240,8 +1232,8 @@
   }
   
   .dashboard-cta-container {
-    transform: scale(1.12); /* Enlarge visually to match button if image has built-in padding */
-    margin: 1.5rem 0;
+    margin: 1rem 0;
+    width: 100%;
   }
 
   .robot-image {

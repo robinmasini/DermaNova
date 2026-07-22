@@ -590,6 +590,11 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
               >
                 {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
               </button>
+              
+              {/* Invisible spacer to balance the small-upload icon and perfectly center the button */}
+              {(selectedImages.length < 5) && (
+                <div className={`small-upload ${selectedImages.length === 0 ? 'desktop-hidden' : ''}`} style={{ visibility: 'hidden' }}></div>
+              )}
             </div>
           </div>
           
