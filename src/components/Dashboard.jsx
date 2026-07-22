@@ -528,8 +528,13 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
 
   const renderScannerCard = () => (
     <div className="unified-scanner-card animate-fade-in">
-      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="card-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
         <h2>ANALYSE <span className="brand-light">DERMATOLOGIQUE</span></h2>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+        <p className="card-description" style={{ marginBottom: 0 }}>
+          Importez ou prenez une photo directe. L'IA croisera les données visuelles avec vos documents PDF intégrés.
+        </p>
         {!(isStandalonePortal || isPortalOpen) && (
           <button className="btn-primary-clean" onClick={() => openNewPatientModal('sms')} style={{ padding: '0.6rem 1.2rem', whiteSpace: 'nowrap' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: '8px'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -537,9 +542,6 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           </button>
         )}
       </div>
-      <p className="card-description">
-        Importez ou prenez une photo directe. L'IA croisera les données visuelles avec vos documents PDF intégrés.
-      </p>
       
       <div className={`scanner-body ${selectedImages.length > 0 ? 'has-photo' : 'no-photo'} ${isAnalyzing || analysisResult ? 'has-results' : ''}`}>
         {selectedImages.length === 0 && (

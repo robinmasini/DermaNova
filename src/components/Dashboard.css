@@ -928,7 +928,6 @@
   grid-column: 1 / span 2;
   grid-row: 2;
   margin-top: 0 !important;
-  transform: scale(1.085);
 }
 
 .scanner-body.has-photo {
@@ -2233,7 +2232,7 @@
   .unified-scanner-card {
     height: auto !important;
     overflow-y: visible !important;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem 1.5rem !important; /* Increased horizontal padding to prevent rubbing on left/right edges */
   }
 
   .mobile-navbar {
