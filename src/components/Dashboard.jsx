@@ -1657,7 +1657,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
         <div className="dashboard-content">
           <main className="dashboard-main full-height">
             {activeTab === 'dashboard' && (
-              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: 'auto', minHeight: '100%', paddingTop: '1rem', paddingBottom: '2rem' }}>
+              <div className="dashboard-grid layout-single" style={{ flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start', height: 'auto', minHeight: '100%', width: '100%', paddingTop: '1rem', paddingBottom: '2rem' }}>
                 {renderScannerCard()}
               </div>
             )}
