@@ -93,6 +93,30 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
         aria-label="Diminuer la quantité (-1)"
       />
 
+      {/* COMPTEUR DE QUANTITÉ EN TEMPS RÉEL (Surimposé au centre de la pilule visuelle de l'image) */}
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '5.2%',
+          left: '21.5%',
+          width: '9.5%',
+          height: '9%',
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'center',
+          color: '#ffffff',
+          fontWeight: '900',
+          fontSize: '1.3rem',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          pointerEvents: 'none',
+          zIndex: 9,
+          textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+          background: 'transparent'
+        }}
+      >
+        {quantity}
+      </div>
+
       {/* BOUTON INTERACTIF "+" (Augmenter la quantité) */}
       <button
         type="button"
@@ -162,7 +186,13 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
     const saved = localStorage.getItem('dermaNovaProducts');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // S'assurer que les 3 produits par défaut (dont Yves Rocher id 2) sont toujours présents
+        const missingDefaults = DEFAULT_PRODUCTS.filter(def => !parsed.some(p => p.id === def.id));
+        if (missingDefaults.length > 0) {
+          return [...parsed, ...missingDefaults].sort((a, b) => a.id - b.id);
+        }
+        return parsed;
       } catch (e) {
         console.error("Erreur de parsing des produits", e);
       }
