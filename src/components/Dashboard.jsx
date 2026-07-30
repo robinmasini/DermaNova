@@ -93,30 +93,6 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
         aria-label="Diminuer la quantité (-1)"
       />
 
-      {/* CHIFFRE UNIQUE DYNAMIQUE (Masque opaque dissimulant totalement le chiffre imprimé de l'image) */}
-      <div 
-        style={{
-          position: 'absolute',
-          bottom: '5.2%',
-          left: '21.2%',
-          width: '10%',
-          height: '9%',
-          display: 'flex',
-          alignItems: 'center',
-          justify: 'center',
-          color: '#ffffff',
-          fontWeight: '900',
-          fontSize: '1.35rem',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          pointerEvents: 'none',
-          zIndex: 9,
-          background: '#181b26',
-          borderRadius: '6px'
-        }}
-      >
-        {quantity}
-      </div>
-
       {/* BOUTON INTERACTIF "+" (Augmenter la quantité) */}
       <button
         type="button"
