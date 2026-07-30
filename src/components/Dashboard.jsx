@@ -43,7 +43,7 @@ const DEFAULT_PRODUCTS = [
   }
 ];
 
-// Visuels 1, 2, 3 directement interactifs, sans case ni surimpression
+// Visuels 1, 2, 3 directement interactifs avec compteur dynamique cadré dans la pilule
 function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAddToCart }) {
   return (
     <div 
@@ -75,40 +75,58 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
       {/* BOUTON INTERACTIF "-" (Diminuer la quantité) */}
       <button
         type="button"
+        className="product-hotspot-btn"
         onClick={() => onUpdateQuantity && onUpdateQuantity(product.id, -1)}
         style={{
           position: 'absolute',
-          bottom: '5.2%',
-          left: '12%',
-          width: '10%',
-          height: '9%',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
+          bottom: '4.8%',
+          left: '11.5%',
+          width: '9.5%',
+          height: '8%',
           borderRadius: '50%',
-          zIndex: 10,
-          outline: 'none'
+          zIndex: 10
         }}
         title="Diminuer la quantité (-1)"
         aria-label="Diminuer la quantité (-1)"
       />
 
+      {/* COMPTEUR DE QUANTITÉ INTÉGRÉ DANS LA PILULE DU VISUEL (Cadré strictement à l'intérieur) */}
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '4.8%',
+          left: '21%',
+          width: '10%',
+          height: '8%',
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'center',
+          color: '#ffffff',
+          fontWeight: '900',
+          fontSize: 'clamp(1.05rem, 2.2vw, 1.35rem)',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          pointerEvents: 'none',
+          zIndex: 9,
+          background: '#1b1f2b', // Masque 100% ajusté à la pilule sombre sans débordement
+          borderRadius: '8px'
+        }}
+      >
+        {quantity}
+      </div>
+
       {/* BOUTON INTERACTIF "+" (Augmenter la quantité) */}
       <button
         type="button"
+        className="product-hotspot-btn"
         onClick={() => onUpdateQuantity && onUpdateQuantity(product.id, 1)}
         style={{
           position: 'absolute',
-          bottom: '5.2%',
+          bottom: '4.8%',
           left: '31%',
-          width: '10%',
-          height: '9%',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
+          width: '9.5%',
+          height: '8%',
           borderRadius: '50%',
-          zIndex: 10,
-          outline: 'none'
+          zIndex: 10
         }}
         title="Augmenter la quantité (+1)"
         aria-label="Augmenter la quantité (+1)"
@@ -117,19 +135,16 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
       {/* BOUTON INTERACTIF "AJOUTER AU PANIER" */}
       <button
         type="button"
+        className="product-hotspot-btn"
         onClick={() => onAddToCart && onAddToCart(product, quantity)}
         style={{
           position: 'absolute',
-          bottom: '5.2%',
+          bottom: '4.8%',
           left: '43%',
           width: '45%',
-          height: '9%',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          borderRadius: '26px',
-          zIndex: 10,
-          outline: 'none'
+          height: '8%',
+          borderRadius: '24px',
+          zIndex: 10
         }}
         title="Ajouter au panier"
         aria-label="Ajouter au panier"

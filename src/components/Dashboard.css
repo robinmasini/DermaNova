@@ -2280,6 +2280,24 @@
   display: flex !important;
 }
 
+/* Boutons hotspots interactifs sur les visuels produits 1, 2, 3 */
+.product-hotspot-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.product-hotspot-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.product-hotspot-btn:active {
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
 @media (max-width: 1024px) {
   .unified-scanner-card {
     max-width: 100%;
