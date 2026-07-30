@@ -83,6 +83,18 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
   }, [products]);
 
   const [activeProductIndex, setActiveProductIndex] = useState(0);
+  const [productQuantities, setProductQuantities] = useState({});
+
+  const getQuantity = (id) => productQuantities[id] || 1;
+
+  const updateQuantity = (id, delta) => {
+    setProductQuantities(prev => {
+      const current = prev[id] || 1;
+      const updated = Math.max(1, current + delta);
+      return { ...prev, [id]: updated };
+    });
+  };
+
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
   const [newProductData, setNewProductData] = useState({
     name: '',
@@ -851,108 +863,124 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                     </p>
                   </div>
 
-                  {products.length > 0 ? (
-                    <div className="product-carousel-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem', margin: '0.5rem 0' }}>
-                      <div className="product-carousel-container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%', justifyContent: 'center' }}>
-                        <button 
-                          className="carousel-arrow" 
-                          onClick={() => setActiveProductIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
-                          style={{
-                            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                            color: '#fff', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer',
-                            fontSize: '1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-                          }}
-                          title="Produit précédent"
-                        >
-                          ‹
-                        </button>
+                  {products.length > 0 ? (() => {
+                    const currentProd = products[activeProductIndex % products.length];
+                    const qty = getQuantity(currentProd.id);
+                    return (
+                      <div className="product-carousel-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', margin: '0.8rem 0' }}>
+                        <div className="product-carousel-container" style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', width: '100%', justifyContent: 'center' }}>
+                          <button 
+                            className="carousel-arrow" 
+                            onClick={() => setActiveProductIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
+                            style={{
+                              background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
+                              color: '#fff', width: '48px', height: '48px', borderRadius: '50%', cursor: 'pointer',
+                              fontSize: '1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                              boxShadow: '0 4px 15px rgba(0,0,0,0.3)', transition: 'all 0.3s'
+                            }}
+                            title="Produit précédent"
+                          >
+                            ‹
+                          </button>
 
-                        <div className="carousel-product-card glass-panel" style={{
-                          flex: 1, maxWidth: '420px', padding: '1.5rem', borderRadius: '20px',
-                          display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
-                          border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.04)'
-                        }}>
-                          <div style={{ position: 'relative', width: '100%', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
-                            <img 
-                              src={products[activeProductIndex % products.length].image} 
-                              alt={products[activeProductIndex % products.length].name} 
-                              style={{ maxHeight: '240px', maxWidth: '100%', objectFit: 'contain', borderRadius: '16px' }}
-                            />
-                            <span style={{
-                              position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.6)',
-                              padding: '0.3rem 0.8rem', borderRadius: '12px', fontSize: '0.75rem', color: 'var(--accent-cyan)',
-                              border: '1px solid rgba(255,255,255,0.2)', fontWeight: '600'
-                            }}>
-                              {products[activeProductIndex % products.length].problem || "Vieillissement cutané"}
-                            </span>
-                          </div>
-
-                          <h3 style={{ margin: '0 0 0.3rem 0', color: '#fff', fontSize: '1.2rem' }}>
-                            {products[activeProductIndex % products.length].name}
-                          </h3>
-                          <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', marginBottom: '0.8rem' }}>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>
-                              {products[activeProductIndex % products.length].brand}
-                            </span>
-                            <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>
-                              {products[activeProductIndex % products.length].price}
-                            </span>
-                          </div>
-
-                          <p style={{ fontSize: '0.88rem', color: '#d0d0d0', lineHeight: '1.5', margin: '0 0 1rem 0' }}>
-                            {products[activeProductIndex % products.length].description}
-                          </p>
-
-                          {products[activeProductIndex % products.length].ingredients && (
-                            <div style={{
-                              width: '100%', padding: '0.8rem', background: 'rgba(255,255,255,0.05)',
-                              borderRadius: '12px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem', textAlign: 'left'
-                            }}>
-                              <strong style={{ color: '#fff' }}>Actifs clés :</strong> {products[activeProductIndex % products.length].ingredients}
+                          <div className="carousel-product-card glass-panel" style={{
+                            flex: 1, maxWidth: '500px', padding: '1.5rem', borderRadius: '24px',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
+                            border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.04)',
+                            boxShadow: '0 12px 40px rgba(0,0,0,0.4)'
+                          }}>
+                            {/* Image du produit agrandie pour une excellente lisibilité */}
+                            <div style={{ position: 'relative', width: '100%', marginBottom: '1.2rem', display: 'flex', justifyContent: 'center' }}>
+                              <img 
+                                src={currentProd.image} 
+                                alt={currentProd.name} 
+                                style={{ maxHeight: '460px', width: '100%', objectFit: 'contain', borderRadius: '18px' }}
+                              />
                             </div>
-                          )}
+
+                            {/* Barre de contrôle interactive (Quantité - 1 + et Ajouter au panier) */}
+                            <div style={{ display: 'flex', gap: '1rem', width: '100%', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                              <div style={{
+                                display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(255,255,255,0.08)',
+                                padding: '0.5rem 1rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)'
+                              }}>
+                                <button 
+                                  onClick={() => updateQuantity(currentProd.id, -1)}
+                                  style={{
+                                    background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
+                                    color: '#fff', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer',
+                                    fontSize: '1.3rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                  }}
+                                  title="Diminuer la quantité"
+                                >
+                                  -
+                                </button>
+                                <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '1.2rem', minWidth: '24px', textAlign: 'center' }}>
+                                  {qty}
+                                </span>
+                                <button 
+                                  onClick={() => updateQuantity(currentProd.id, 1)}
+                                  style={{
+                                    background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
+                                    color: '#fff', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer',
+                                    fontSize: '1.3rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                  }}
+                                  title="Augmenter la quantité"
+                                >
+                                  +
+                                </button>
+                              </div>
+
+                              <button 
+                                className="btn-primary-clean"
+                                style={{
+                                  flex: 1, minWidth: '200px', padding: '0.9rem 1.4rem',
+                                  background: 'linear-gradient(135deg, #70e000, #38b000)', color: '#000000',
+                                  fontWeight: '800', border: 'none', borderRadius: '16px', fontSize: '0.95rem',
+                                  boxShadow: '0 4px 20px rgba(112, 224, 0, 0.4)', cursor: 'pointer',
+                                  letterSpacing: '0.5px'
+                                }}
+                                onClick={() => alert(`✓ ${qty} x "${currentProd.name}" a/ont été ajouté(s) au panier de recommandation du patient !`)}
+                              >
+                                🛒 AJOUTER AU PANIER ({qty})
+                              </button>
+                            </div>
+                          </div>
 
                           <button 
-                            className="btn-primary-clean"
-                            style={{ width: '100%', padding: '0.9rem', fontSize: '0.95rem', fontWeight: '700' }}
-                            onClick={() => alert(`Le produit ${products[activeProductIndex % products.length].name} a été ajouté à la fiche de recommandation patient.`)}
+                            className="carousel-arrow" 
+                            onClick={() => setActiveProductIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
+                            style={{
+                              background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
+                              color: '#fff', width: '48px', height: '48px', borderRadius: '50%', cursor: 'pointer',
+                              fontSize: '1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                              boxShadow: '0 4px 15px rgba(0,0,0,0.3)', transition: 'all 0.3s'
+                            }}
+                            title="Produit suivant"
                           >
-                            Recommander au patient
+                            ›
                           </button>
                         </div>
 
-                        <button 
-                          className="carousel-arrow" 
-                          onClick={() => setActiveProductIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
-                          style={{
-                            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                            color: '#fff', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer',
-                            fontSize: '1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-                          }}
-                          title="Produit suivant"
-                        >
-                          ›
-                        </button>
+                        {products.length > 1 && (
+                          <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.3rem' }}>
+                            {products.map((_, idx) => (
+                              <span 
+                                key={idx}
+                                onClick={() => setActiveProductIndex(idx)}
+                                style={{
+                                  width: idx === (activeProductIndex % products.length) ? '28px' : '10px',
+                                  height: '10px', borderRadius: '5px',
+                                  background: idx === (activeProductIndex % products.length) ? '#ffffff' : 'rgba(255,255,255,0.3)',
+                                  cursor: 'pointer', transition: 'all 0.3s'
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
-
-                      {products.length > 1 && (
-                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                          {products.map((_, idx) => (
-                            <span 
-                              key={idx}
-                              onClick={() => setActiveProductIndex(idx)}
-                              style={{
-                                width: idx === (activeProductIndex % products.length) ? '24px' : '8px',
-                                height: '8px', borderRadius: '4px',
-                                background: idx === (activeProductIndex % products.length) ? '#ffffff' : 'rgba(255,255,255,0.3)',
-                                cursor: 'pointer', transition: 'all 0.3s'
-                              }}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
+                    );
+                  })() : (
                     <div className="empty-box-clean">Aucun produit disponible dans le catalogue.</div>
                   )}
                 </div>
@@ -1415,53 +1443,101 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           </div>
         </div>
 
-        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
-          {filteredProducts.map(prod => (
-            <div key={prod.id} className="product-item-card glass-panel animate-fade-in" style={{
-              display: 'flex', flexDirection: 'column', borderRadius: '20px', overflow: 'hidden',
-              border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', padding: '1.2rem', position: 'relative'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                <span style={{
-                  background: 'rgba(76, 201, 240, 0.15)', color: 'var(--accent-cyan)', padding: '0.3rem 0.8rem',
-                  borderRadius: '12px', fontSize: '0.75rem', fontWeight: '600', border: '1px solid rgba(76, 201, 240, 0.3)'
-                }}>
-                  {prod.problem || "Vieillissement cutané"}
-                </span>
-                <button 
-                  onClick={() => {
-                    if (window.confirm(`Voulez-vous supprimer ${prod.name} du catalogue ?`)) {
-                      setProducts(products.filter(p => p.id !== prod.id));
-                    }
-                  }}
-                  style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1rem' }}
-                  title="Supprimer"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', height: '180px', width: '100%' }}>
-                <img src={prod.image} alt={prod.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', borderRadius: '12px' }} />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ margin: '0 0 0.2rem 0', color: '#fff', fontSize: '1.1rem' }}>{prod.name}</h3>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{prod.brand}</span>
-                  <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>{prod.price}</span>
+        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem', marginTop: '1.5rem' }}>
+          {filteredProducts.map(prod => {
+            const qty = getQuantity(prod.id);
+            return (
+              <div key={prod.id} className="product-item-card glass-panel animate-fade-in" style={{
+                display: 'flex', flexDirection: 'column', borderRadius: '24px', overflow: 'hidden',
+                border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', position: 'relative'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
+                  <span style={{
+                    background: 'rgba(76, 201, 240, 0.15)', color: 'var(--accent-cyan)', padding: '0.3rem 0.8rem',
+                    borderRadius: '12px', fontSize: '0.75rem', fontWeight: '600', border: '1px solid rgba(76, 201, 240, 0.3)'
+                  }}>
+                    {prod.problem || "Vieillissement cutané"}
+                  </span>
+                  <button 
+                    onClick={() => {
+                      if (window.confirm(`Voulez-vous supprimer ${prod.name} du catalogue ?`)) {
+                        setProducts(products.filter(p => p.id !== prod.id));
+                      }
+                    }}
+                    style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.1rem' }}
+                    title="Supprimer"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <p style={{ fontSize: '0.85rem', color: '#d0d0d0', lineHeight: '1.4', margin: '0 0 0.8rem 0', flex: 1 }}>
-                  {prod.description}
-                </p>
-                {prod.ingredients && (
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.6rem' }}>
-                    <strong style={{ color: '#fff' }}>Actifs :</strong> {prod.ingredients}
+
+                {/* Affichage de l'image de la carte produit en haute définition */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.2rem', width: '100%' }}>
+                  <img src={prod.image} alt={prod.name} style={{ maxHeight: '420px', width: '100%', objectFit: 'contain', borderRadius: '16px' }} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <h3 style={{ margin: '0 0 0.2rem 0', color: '#fff', fontSize: '1.2rem' }}>{prod.name}</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{prod.brand}</span>
+                    <span style={{ color: '#fff', fontWeight: '700', fontSize: '1.1rem' }}>{prod.price}</span>
                   </div>
-                )}
+                  <p style={{ fontSize: '0.88rem', color: '#d0d0d0', lineHeight: '1.5', margin: '0 0 1rem 0', flex: 1 }}>
+                    {prod.description}
+                  </p>
+                  {prod.ingredients && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.6rem', marginBottom: '1rem' }}>
+                      <strong style={{ color: '#fff' }}>Actifs :</strong> {prod.ingredients}
+                    </div>
+                  )}
+
+                  {/* Contrôles interactifs Quantité (- 1 +) et Ajouter au panier */}
+                  <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', marginTop: 'auto' }}>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.08)',
+                      padding: '0.4rem 0.8rem', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.2)'
+                    }}>
+                      <button 
+                        onClick={() => updateQuantity(prod.id, -1)}
+                        style={{
+                          background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
+                          color: '#fff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer',
+                          fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}
+                      >
+                        -
+                      </button>
+                      <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '1rem', minWidth: '20px', textAlign: 'center' }}>
+                        {qty}
+                      </span>
+                      <button 
+                        onClick={() => updateQuantity(prod.id, 1)}
+                        style={{
+                          background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
+                          color: '#fff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer',
+                          fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button 
+                      className="btn-primary-clean"
+                      style={{
+                        flex: 1, padding: '0.75rem 1rem', background: 'linear-gradient(135deg, #70e000, #38b000)',
+                        color: '#000000', fontWeight: '800', border: 'none', borderRadius: '14px', fontSize: '0.88rem',
+                        boxShadow: '0 4px 15px rgba(112, 224, 0, 0.3)', cursor: 'pointer'
+                      }}
+                      onClick={() => alert(`✓ ${qty} x "${prod.name}" ajouté(s) au panier !`)}
+                    >
+                      🛒 AJOUTER AU PANIER ({qty})
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {filteredProducts.length === 0 && (
             <div className="empty-box-clean" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center' }}>
               Aucun produit trouvé.
