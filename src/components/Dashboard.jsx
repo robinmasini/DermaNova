@@ -43,24 +43,22 @@ const DEFAULT_PRODUCTS = [
   }
 ];
 
-// Composant de carte produit interactive basée directement sur le visuel 1, 2, 3 de l'utilisateur
-function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAddToCart, onDelete, showDelete = false }) {
+// Visuels 1, 2, 3 directement interactifs, sans case ni surimpression
+function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAddToCart }) {
   return (
     <div 
-      className="interactive-product-card-container animate-fade-in"
+      className="interactive-product-card animate-fade-in"
       style={{
         position: 'relative',
         width: '100%',
         maxWidth: '480px',
         margin: '0 auto',
-        borderRadius: '38px',
-        overflow: 'hidden',
-        boxShadow: '0 16px 45px rgba(0, 0, 0, 0.45)',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        background: 'transparent'
+        background: 'transparent',
+        border: 'none',
+        padding: 0
       }}
     >
-      {/* Visuel complet de la carte créé par l'utilisateur (1.png / 2.png / 3.png) */}
+      {/* Visuel 1.png / 2.png / 3.png direct seul */}
       <img 
         src={product.image} 
         alt={product.name} 
@@ -68,7 +66,7 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
           width: '100%',
           height: 'auto',
           display: 'block',
-          borderRadius: '38px',
+          borderRadius: '24px',
           userSelect: 'none',
           pointerEvents: 'none'
         }} 
@@ -94,29 +92,6 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
         title="Diminuer la quantité (-1)"
         aria-label="Diminuer la quantité (-1)"
       />
-
-      {/* COMPTEUR DE QUANTITÉ DYNAMIQUE EN TEMPS RÉEL (Surimposé au centre de la pilule visuelle) */}
-      <div 
-        style={{
-          position: 'absolute',
-          bottom: '5.2%',
-          left: '22%',
-          width: '9%',
-          height: '9%',
-          display: 'flex',
-          alignItems: 'center',
-          justify: 'center',
-          color: '#ffffff',
-          fontWeight: '900',
-          fontSize: '1.35rem',
-          pointerEvents: 'none',
-          zIndex: 9,
-          textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-          background: 'transparent'
-        }}
-      >
-        {quantity}
-      </div>
 
       {/* BOUTON INTERACTIF "+" (Augmenter la quantité) */}
       <button
@@ -156,37 +131,9 @@ function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAdd
           zIndex: 10,
           outline: 'none'
         }}
-        title={`Ajouter ${quantity} au panier`}
+        title="Ajouter au panier"
         aria-label="Ajouter au panier"
       />
-
-      {/* Bouton de suppression praticien optionnel */}
-      {showDelete && onDelete && (
-        <button
-          type="button"
-          onClick={() => onDelete(product)}
-          style={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            background: 'rgba(0, 0, 0, 0.65)',
-            color: '#ffffff',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            borderRadius: '50%',
-            width: '34px',
-            height: '34px',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            zIndex: 12
-          }}
-          title="Supprimer du catalogue"
-        >
-          ✕
-        </button>
-      )}
     </div>
   );
 }
@@ -1544,12 +1491,6 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
               quantity={getQuantity(prod.id)}
               onUpdateQuantity={updateQuantity}
               onAddToCart={handleAddToCart}
-              showDelete={true}
-              onDelete={(p) => {
-                if (window.confirm(`Voulez-vous supprimer ${p.name} du catalogue ?`)) {
-                  setProducts(products.filter(item => item.id !== p.id));
-                }
-              }}
             />
           ))}
           {filteredProducts.length === 0 && (
