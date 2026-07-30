@@ -43,8 +43,153 @@ const DEFAULT_PRODUCTS = [
   }
 ];
 
-// Configuration du worker PDF.js via CDN pour éviter les problèmes de build Vite
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+// Composant de carte produit interactive basée directement sur le visuel 1, 2, 3 de l'utilisateur
+function ProductCardInteractive({ product, quantity = 1, onUpdateQuantity, onAddToCart, onDelete, showDelete = false }) {
+  return (
+    <div 
+      className="interactive-product-card-container animate-fade-in"
+      style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '480px',
+        margin: '0 auto',
+        borderRadius: '38px',
+        overflow: 'hidden',
+        boxShadow: '0 16px 45px rgba(0, 0, 0, 0.45)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        background: 'transparent'
+      }}
+    >
+      {/* Visuel complet de la carte créé par l'utilisateur (1.png / 2.png / 3.png) */}
+      <img 
+        src={product.image} 
+        alt={product.name} 
+        style={{
+          width: '100%',
+          height: 'auto',
+          display: 'block',
+          borderRadius: '38px',
+          userSelect: 'none',
+          pointerEvents: 'none'
+        }} 
+      />
+
+      {/* BOUTON INTERACTIF "-" (Diminuer la quantité) */}
+      <button
+        type="button"
+        onClick={() => onUpdateQuantity && onUpdateQuantity(product.id, -1)}
+        style={{
+          position: 'absolute',
+          bottom: '5.2%',
+          left: '12%',
+          width: '10%',
+          height: '9%',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: '50%',
+          zIndex: 10,
+          outline: 'none'
+        }}
+        title="Diminuer la quantité (-1)"
+        aria-label="Diminuer la quantité (-1)"
+      />
+
+      {/* COMPTEUR DE QUANTITÉ DYNAMIQUE EN TEMPS RÉEL (Surimposé au centre de la pilule visuelle) */}
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '5.2%',
+          left: '22%',
+          width: '9%',
+          height: '9%',
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'center',
+          color: '#ffffff',
+          fontWeight: '900',
+          fontSize: '1.35rem',
+          pointerEvents: 'none',
+          zIndex: 9,
+          textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+          background: 'transparent'
+        }}
+      >
+        {quantity}
+      </div>
+
+      {/* BOUTON INTERACTIF "+" (Augmenter la quantité) */}
+      <button
+        type="button"
+        onClick={() => onUpdateQuantity && onUpdateQuantity(product.id, 1)}
+        style={{
+          position: 'absolute',
+          bottom: '5.2%',
+          left: '31%',
+          width: '10%',
+          height: '9%',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: '50%',
+          zIndex: 10,
+          outline: 'none'
+        }}
+        title="Augmenter la quantité (+1)"
+        aria-label="Augmenter la quantité (+1)"
+      />
+
+      {/* BOUTON INTERACTIF "AJOUTER AU PANIER" */}
+      <button
+        type="button"
+        onClick={() => onAddToCart && onAddToCart(product, quantity)}
+        style={{
+          position: 'absolute',
+          bottom: '5.2%',
+          left: '43%',
+          width: '45%',
+          height: '9%',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: '26px',
+          zIndex: 10,
+          outline: 'none'
+        }}
+        title={`Ajouter ${quantity} au panier`}
+        aria-label="Ajouter au panier"
+      />
+
+      {/* Bouton de suppression praticien optionnel */}
+      {showDelete && onDelete && (
+        <button
+          type="button"
+          onClick={() => onDelete(product)}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'rgba(0, 0, 0, 0.65)',
+            color: '#ffffff',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '50%',
+            width: '34px',
+            height: '34px',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            zIndex: 12
+          }}
+          title="Supprimer du catalogue"
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function Dashboard({ onLogout, isStandalonePortal }) {
   const [activeTab, setActiveTab] = useState(() => {
@@ -93,6 +238,10 @@ export default function Dashboard({ onLogout, isStandalonePortal }) {
       const updated = Math.max(1, current + delta);
       return { ...prev, [id]: updated };
     });
+  };
+
+  const handleAddToCart = (product, quantity) => {
+    alert(`✓ ${quantity} x "${product.name}" a/ont été ajouté(s) au panier du patient !`);
   };
 
   const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
@@ -867,15 +1016,15 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                     const currentProd = products[activeProductIndex % products.length];
                     const qty = getQuantity(currentProd.id);
                     return (
-                      <div className="product-carousel-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', margin: '0.8rem 0' }}>
-                        <div className="product-carousel-container" style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', width: '100%', justifyContent: 'center' }}>
+                      <div className="product-carousel-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem', margin: '0.8rem 0' }}>
+                        <div className="product-carousel-container" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', width: '100%', justifyContent: 'center' }}>
                           <button 
                             className="carousel-arrow" 
                             onClick={() => setActiveProductIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
                             style={{
                               background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
-                              color: '#fff', width: '48px', height: '48px', borderRadius: '50%', cursor: 'pointer',
-                              fontSize: '1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                              color: '#fff', width: '52px', height: '52px', borderRadius: '50%', cursor: 'pointer',
+                              fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                               boxShadow: '0 4px 15px rgba(0,0,0,0.3)', transition: 'all 0.3s'
                             }}
                             title="Produit précédent"
@@ -883,77 +1032,21 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                             ‹
                           </button>
 
-                          <div className="carousel-product-card glass-panel" style={{
-                            flex: 1, maxWidth: '500px', padding: '1.5rem', borderRadius: '24px',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
-                            border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.04)',
-                            boxShadow: '0 12px 40px rgba(0,0,0,0.4)'
-                          }}>
-                            {/* Image du produit agrandie pour une excellente lisibilité */}
-                            <div style={{ position: 'relative', width: '100%', marginBottom: '1.2rem', display: 'flex', justifyContent: 'center' }}>
-                              <img 
-                                src={currentProd.image} 
-                                alt={currentProd.name} 
-                                style={{ maxHeight: '460px', width: '100%', objectFit: 'contain', borderRadius: '18px' }}
-                              />
-                            </div>
-
-                            {/* Barre de contrôle interactive (Quantité - 1 + et Ajouter au panier) */}
-                            <div style={{ display: 'flex', gap: '1rem', width: '100%', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-                              <div style={{
-                                display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(255,255,255,0.08)',
-                                padding: '0.5rem 1rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)'
-                              }}>
-                                <button 
-                                  onClick={() => updateQuantity(currentProd.id, -1)}
-                                  style={{
-                                    background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
-                                    color: '#fff', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer',
-                                    fontSize: '1.3rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                  }}
-                                  title="Diminuer la quantité"
-                                >
-                                  -
-                                </button>
-                                <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '1.2rem', minWidth: '24px', textAlign: 'center' }}>
-                                  {qty}
-                                </span>
-                                <button 
-                                  onClick={() => updateQuantity(currentProd.id, 1)}
-                                  style={{
-                                    background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
-                                    color: '#fff', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer',
-                                    fontSize: '1.3rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                  }}
-                                  title="Augmenter la quantité"
-                                >
-                                  +
-                                </button>
-                              </div>
-
-                              <button 
-                                className="btn-primary-clean"
-                                style={{
-                                  flex: 1, minWidth: '200px', padding: '0.9rem 1.4rem',
-                                  background: 'linear-gradient(135deg, #70e000, #38b000)', color: '#000000',
-                                  fontWeight: '800', border: 'none', borderRadius: '16px', fontSize: '0.95rem',
-                                  boxShadow: '0 4px 20px rgba(112, 224, 0, 0.4)', cursor: 'pointer',
-                                  letterSpacing: '0.5px'
-                                }}
-                                onClick={() => alert(`✓ ${qty} x "${currentProd.name}" a/ont été ajouté(s) au panier de recommandation du patient !`)}
-                              >
-                                🛒 AJOUTER AU PANIER ({qty})
-                              </button>
-                            </div>
-                          </div>
+                          {/* La carte produit créée par l'utilisateur (1.png / 2.png / 3.png) directement interactive */}
+                          <ProductCardInteractive
+                            product={currentProd}
+                            quantity={qty}
+                            onUpdateQuantity={updateQuantity}
+                            onAddToCart={handleAddToCart}
+                          />
 
                           <button 
                             className="carousel-arrow" 
                             onClick={() => setActiveProductIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
                             style={{
                               background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)',
-                              color: '#fff', width: '48px', height: '48px', borderRadius: '50%', cursor: 'pointer',
-                              fontSize: '1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                              color: '#fff', width: '52px', height: '52px', borderRadius: '50%', cursor: 'pointer',
+                              fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                               boxShadow: '0 4px 15px rgba(0,0,0,0.3)', transition: 'all 0.3s'
                             }}
                             title="Produit suivant"
@@ -963,7 +1056,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                         </div>
 
                         {products.length > 1 && (
-                          <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.3rem' }}>
+                          <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem' }}>
                             {products.map((_, idx) => (
                               <span 
                                 key={idx}
@@ -1443,101 +1536,22 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
           </div>
         </div>
 
-        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem', marginTop: '1.5rem' }}>
-          {filteredProducts.map(prod => {
-            const qty = getQuantity(prod.id);
-            return (
-              <div key={prod.id} className="product-item-card glass-panel animate-fade-in" style={{
-                display: 'flex', flexDirection: 'column', borderRadius: '24px', overflow: 'hidden',
-                border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', position: 'relative'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                  <span style={{
-                    background: 'rgba(76, 201, 240, 0.15)', color: 'var(--accent-cyan)', padding: '0.3rem 0.8rem',
-                    borderRadius: '12px', fontSize: '0.75rem', fontWeight: '600', border: '1px solid rgba(76, 201, 240, 0.3)'
-                  }}>
-                    {prod.problem || "Vieillissement cutané"}
-                  </span>
-                  <button 
-                    onClick={() => {
-                      if (window.confirm(`Voulez-vous supprimer ${prod.name} du catalogue ?`)) {
-                        setProducts(products.filter(p => p.id !== prod.id));
-                      }
-                    }}
-                    style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1.1rem' }}
-                    title="Supprimer"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Affichage de l'image de la carte produit en haute définition */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.2rem', width: '100%' }}>
-                  <img src={prod.image} alt={prod.name} style={{ maxHeight: '420px', width: '100%', objectFit: 'contain', borderRadius: '16px' }} />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h3 style={{ margin: '0 0 0.2rem 0', color: '#fff', fontSize: '1.2rem' }}>{prod.name}</h3>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{prod.brand}</span>
-                    <span style={{ color: '#fff', fontWeight: '700', fontSize: '1.1rem' }}>{prod.price}</span>
-                  </div>
-                  <p style={{ fontSize: '0.88rem', color: '#d0d0d0', lineHeight: '1.5', margin: '0 0 1rem 0', flex: 1 }}>
-                    {prod.description}
-                  </p>
-                  {prod.ingredients && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.6rem', marginBottom: '1rem' }}>
-                      <strong style={{ color: '#fff' }}>Actifs :</strong> {prod.ingredients}
-                    </div>
-                  )}
-
-                  {/* Contrôles interactifs Quantité (- 1 +) et Ajouter au panier */}
-                  <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', marginTop: 'auto' }}>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.08)',
-                      padding: '0.4rem 0.8rem', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.2)'
-                    }}>
-                      <button 
-                        onClick={() => updateQuantity(prod.id, -1)}
-                        style={{
-                          background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
-                          color: '#fff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer',
-                          fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}
-                      >
-                        -
-                      </button>
-                      <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '1rem', minWidth: '20px', textAlign: 'center' }}>
-                        {qty}
-                      </span>
-                      <button 
-                        onClick={() => updateQuantity(prod.id, 1)}
-                        style={{
-                          background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
-                          color: '#fff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer',
-                          fontSize: '1.1rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <button 
-                      className="btn-primary-clean"
-                      style={{
-                        flex: 1, padding: '0.75rem 1rem', background: 'linear-gradient(135deg, #70e000, #38b000)',
-                        color: '#000000', fontWeight: '800', border: 'none', borderRadius: '14px', fontSize: '0.88rem',
-                        boxShadow: '0 4px 15px rgba(112, 224, 0, 0.3)', cursor: 'pointer'
-                      }}
-                      onClick={() => alert(`✓ ${qty} x "${prod.name}" ajouté(s) au panier !`)}
-                    >
-                      🛒 AJOUTER AU PANIER ({qty})
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2.5rem', marginTop: '1.5rem', justifyContent: 'center' }}>
+          {filteredProducts.map(prod => (
+            <ProductCardInteractive
+              key={prod.id}
+              product={prod}
+              quantity={getQuantity(prod.id)}
+              onUpdateQuantity={updateQuantity}
+              onAddToCart={handleAddToCart}
+              showDelete={true}
+              onDelete={(p) => {
+                if (window.confirm(`Voulez-vous supprimer ${p.name} du catalogue ?`)) {
+                  setProducts(products.filter(item => item.id !== p.id));
+                }
+              }}
+            />
+          ))}
           {filteredProducts.length === 0 && (
             <div className="empty-box-clean" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center' }}>
               Aucun produit trouvé.
