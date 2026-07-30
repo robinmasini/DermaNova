@@ -6,16 +6,95 @@ import logo from '../assets/dn.png';
 import bgImage from '../assets/bg.png';
 import robotImg from '../assets/robot.png';
 import navbarImg from '../assets/navbar.png';
+import prod1Img from '../assets/1.png';
+import prod2Img from '../assets/2.png';
+import prod3Img from '../assets/3.png';
+
+const DEFAULT_PRODUCTS = [
+  {
+    id: 1,
+    name: "Revitalift",
+    brand: "L'Oréal Paris",
+    price: "32,78 €",
+    problem: "Vieillissement cutané",
+    description: "Soin hydratant anti-âge enrichi en dérivés de rétinol stabilisé. Réduit visiblement les rides et raffermit la peau.",
+    ingredients: "Rétinol stabilisé, Acide Hyaluronique, Pro-Xylane",
+    image: prod1Img
+  },
+  {
+    id: 2,
+    name: "La Crème Correctrice Confort Nuit",
+    brand: "Yves Rocher France",
+    price: "54,90 €",
+    problem: "Vieillissement cutané",
+    description: "Soin de nuit anti-âge régénérant. Lisse le grain de peau et restaure le confort épidermique.",
+    ingredients: "Nectar de Bourgeon Végétal, Céramides, Huiles botaniques",
+    image: prod2Img
+  },
+  {
+    id: 3,
+    name: "Lift & Firm - Plumping Day Cream",
+    brand: "Sephora",
+    price: "19,99 €",
+    problem: "Vieillissement cutané",
+    description: "Crème de jour repulpante enrichie en Peptides et Acide Hyaluronique. Hydrate et repulpe dès 25 ans.",
+    ingredients: "Peptides, Acide Hyaluronique Vectorisé, Vitamine E",
+    image: prod3Img
+  }
+];
 
 // Configuration du worker PDF.js via CDN pour éviter les problèmes de build Vite
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 export default function Dashboard({ onLogout, isStandalonePortal }) {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    const validTabs = ['dashboard', 'patients', 'products', 'pdf_knowledge', 'settings'];
+    if (hash && validTabs.includes(hash)) return hash;
+    const saved = localStorage.getItem('dermaNovaActiveTab');
+    if (saved && validTabs.includes(saved)) return saved;
+    return 'dashboard';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dermaNovaActiveTab', activeTab);
+    window.location.hash = activeTab;
+  }, [activeTab]);
   const [resultTab, setResultTab] = useState('diagnostic');
   const [selectedImages, setSelectedImages] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
+
+  // Produits dermo-cosmétiques (persistés dans localStorage)
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem('dermaNovaProducts');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Erreur de parsing des produits", e);
+      }
+    }
+    return DEFAULT_PRODUCTS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dermaNovaProducts', JSON.stringify(products));
+  }, [products]);
+
+  const [activeProductIndex, setActiveProductIndex] = useState(0);
+  const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
+  const [newProductData, setNewProductData] = useState({
+    name: '',
+    brand: '',
+    price: '',
+    problem: 'Vieillissement cutané',
+    description: '',
+    ingredients: '',
+    image: ''
+  });
+  const [productFilter, setProductFilter] = useState('Tous');
+  const [productSearch, setProductSearch] = useState('');
   
   // States persistants (chargement depuis localStorage)
   const [patients, setPatients] = useState(() => {
@@ -522,6 +601,7 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
   const tabs = [
     { id: 'dashboard', label: 'Tableau de bord' },
     { id: 'patients', label: 'Liste Patients' },
+    { id: 'products', label: 'Produits' },
     { id: 'pdf_knowledge', label: 'Connaissances PDF' },
     { id: 'settings', label: 'Paramètres' },
   ];
@@ -544,91 +624,95 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
       </div>
       
       <div className={`scanner-body ${selectedImages.length > 0 ? 'has-photo' : 'no-photo'} ${isAnalyzing || analysisResult ? 'has-results' : ''}`}>
-        {selectedImages.length === 0 && (
-          <div className="upload-column glass-panel desktop-only">
-            <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
-              <div className="upload-placeholder">
-                <div className="upload-icon-ring">
-                  <span className="upload-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                  </span>
+        <div className="scanner-left-column">
+          {selectedImages.length === 0 && (
+            <div className="upload-column glass-panel desktop-only">
+              <div className="upload-container compact" onClick={() => fileInputRef.current.click()}>
+                <div className="upload-placeholder">
+                  <div className="upload-icon-ring">
+                    <span className="upload-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </span>
+                  </div>
+                  <h3>Photo</h3>
+                  <span className="upload-subtext">Caméra ou Galerie</span>
                 </div>
-                <h3>Photo</h3>
-                <span className="upload-subtext">Caméra ou Galerie</span>
               </div>
             </div>
-          </div>
-        )}
-        
-        <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
-          <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
+          )}
           
-          <div className="robot-actions-container">
-            {selectedImages.length > 0 && (
-              <div className="thumbnails-row">
-                {selectedImages.map((img, index) => (
-                  <div key={index} className="thumbnail-wrapper">
-                    <button className="remove-thumbnail-btn" onClick={(e) => { e.stopPropagation(); removeImage(index); }}>✕</button>
-                    <img src={img.url} alt={`Photo ${index + 1}`} className="thumbnail-image" />
-                    {isAnalyzing && <div className="scan-laser-small"></div>}
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className={`robot-side glass-panel ${isAnalyzing ? 'scanning-active' : ''}`}>
+            <img src={robotImg} alt="DermaNova Assistant Robot" className={`robot-image ${isAnalyzing ? 'floating' : ''}`} />
             
-            <div className="action-row" style={{ width: '100%' }}>
-              {(selectedImages.length < 5) && (
-                <div className={`small-upload ${selectedImages.length === 0 ? 'desktop-hidden' : ''}`} onClick={() => fileInputRef.current.click()}>
-                  <div className="upload-placeholder-small">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                    <span>Photo</span>
-                  </div>
+            <div className="robot-actions-container">
+              {selectedImages.length > 0 && (
+                <div className="thumbnails-row">
+                  {selectedImages.map((img, index) => (
+                    <div key={index} className="thumbnail-wrapper">
+                      <button className="remove-thumbnail-btn" onClick={(e) => { e.stopPropagation(); removeImage(index); }}>✕</button>
+                      <img src={img.url} alt={`Photo ${index + 1}`} className="thumbnail-image" />
+                      {isAnalyzing && <div className="scan-laser-small"></div>}
+                    </div>
+                  ))}
                 </div>
               )}
-              <button 
-                className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
-                onClick={startAnalysis}
-                disabled={isAnalyzing}
-              >
-                {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
-              </button>
               
-              {/* Invisible spacer to balance the small-upload icon and perfectly center the button */}
-              {(selectedImages.length < 5) && (
-                <div className={`small-upload ${selectedImages.length === 0 ? 'desktop-hidden' : ''}`} style={{ visibility: 'hidden' }}></div>
-              )}
+              <div className="action-row" style={{ width: '100%' }}>
+                {(selectedImages.length < 5) && (
+                  <div className={`small-upload ${selectedImages.length === 0 ? 'desktop-hidden' : ''}`} onClick={() => fileInputRef.current.click()}>
+                    <div className="upload-placeholder-small">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                      <span>Photo</span>
+                    </div>
+                  </div>
+                )}
+                <button 
+                  className={`start-analysis-btn ${isAnalyzing ? 'analyzing' : ''} ${analysisResult ? 'success' : ''}`} 
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                >
+                  {isAnalyzing ? "ANALYSE EN COURS..." : analysisResult ? "NOUVELLE ANALYSE" : "DÉMARRER L'ANALYSE"}
+                </button>
+                
+                {/* Invisible spacer to balance the small-upload icon and perfectly center the button */}
+                {(selectedImages.length < 5) && (
+                  <div className={`small-upload ${selectedImages.length === 0 ? 'desktop-hidden' : ''}`} style={{ visibility: 'hidden' }}></div>
+                )}
+              </div>
             </div>
+            
+            <input 
+              type="file" 
+              accept="image/*" 
+              multiple
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handleImageUpload} 
+            />
           </div>
-          
-          <input 
-            type="file" 
-            accept="image/*" 
-            capture="environment" 
-            multiple
-            ref={fileInputRef} 
-            style={{ display: 'none' }} 
-            onChange={handleImageUpload} 
-          />
-        </div>
 
-        <div className="dashboard-cta-container" style={{ position: 'relative' }}>
-          <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} />
-          <a 
-            href="/?portal=true" 
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              position: 'absolute',
-              bottom: '10%',
-              left: '5%',
-              width: '35%',
-              height: '25%',
-              cursor: 'pointer',
-              display: 'block',
-              zIndex: 10
-            }}
-            title="Allons-y !"
-          ></a>
+          <div className="dashboard-cta-container" style={{ position: 'relative' }}>
+            <picture>
+              <source srcSet="/cta.webp" type="image/webp" />
+              <img src="/cta.png" alt="DermaNova CTA" style={{ width: '100%', display: 'block' }} loading="eager" fetchPriority="high" />
+            </picture>
+            <a 
+              href="/?portal=true" 
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                position: 'absolute',
+                bottom: '10%',
+                left: '5%',
+                width: '35%',
+                height: '25%',
+                cursor: 'pointer',
+                display: 'block',
+                zIndex: 10
+              }}
+              title="Allons-y !"
+            ></a>
+          </div>
         </div>
 
         {(isAnalyzing || analysisResult) && (
@@ -652,6 +736,12 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                   onClick={() => setResultTab('traitement')}
                 >
                   TRAITEMENT
+                </button>
+                <button 
+                  className={`result-tab ${resultTab === 'produits' ? 'active' : ''}`}
+                  onClick={() => setResultTab('produits')}
+                >
+                  PRODUITS RECOMMANDÉS
                 </button>
               </div>
 
@@ -751,6 +841,122 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                   </button>
                 </div>
               )}
+
+              {resultTab === 'produits' && (
+                <div className="tab-content animate-fade-in">
+                  <div className="ai-diagnosis">
+                    <h4 style={{ margin: '0 0 0.4rem 0' }}>RECOMMANDATION CIBLÉE : VIEILLISSEMENT CUTANÉ</h4>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                      Soins dermo-cosmétiques formulés pour agir sur les rides, la perte de fermeté et la restauration de la barrière épidermique.
+                    </p>
+                  </div>
+
+                  {products.length > 0 ? (
+                    <div className="product-carousel-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem', margin: '0.5rem 0' }}>
+                      <div className="product-carousel-container" style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%', justifyContent: 'center' }}>
+                        <button 
+                          className="carousel-arrow" 
+                          onClick={() => setActiveProductIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1))}
+                          style={{
+                            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                            color: '#fff', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer',
+                            fontSize: '1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                          }}
+                          title="Produit précédent"
+                        >
+                          ‹
+                        </button>
+
+                        <div className="carousel-product-card glass-panel" style={{
+                          flex: 1, maxWidth: '420px', padding: '1.5rem', borderRadius: '20px',
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
+                          border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.04)'
+                        }}>
+                          <div style={{ position: 'relative', width: '100%', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+                            <img 
+                              src={products[activeProductIndex % products.length].image} 
+                              alt={products[activeProductIndex % products.length].name} 
+                              style={{ maxHeight: '240px', maxWidth: '100%', objectFit: 'contain', borderRadius: '16px' }}
+                            />
+                            <span style={{
+                              position: 'absolute', top: 10, right: 10, background: 'rgba(0,0,0,0.6)',
+                              padding: '0.3rem 0.8rem', borderRadius: '12px', fontSize: '0.75rem', color: 'var(--accent-cyan)',
+                              border: '1px solid rgba(255,255,255,0.2)', fontWeight: '600'
+                            }}>
+                              {products[activeProductIndex % products.length].problem || "Vieillissement cutané"}
+                            </span>
+                          </div>
+
+                          <h3 style={{ margin: '0 0 0.3rem 0', color: '#fff', fontSize: '1.2rem' }}>
+                            {products[activeProductIndex % products.length].name}
+                          </h3>
+                          <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', marginBottom: '0.8rem' }}>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>
+                              {products[activeProductIndex % products.length].brand}
+                            </span>
+                            <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>
+                              {products[activeProductIndex % products.length].price}
+                            </span>
+                          </div>
+
+                          <p style={{ fontSize: '0.88rem', color: '#d0d0d0', lineHeight: '1.5', margin: '0 0 1rem 0' }}>
+                            {products[activeProductIndex % products.length].description}
+                          </p>
+
+                          {products[activeProductIndex % products.length].ingredients && (
+                            <div style={{
+                              width: '100%', padding: '0.8rem', background: 'rgba(255,255,255,0.05)',
+                              borderRadius: '12px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem', textAlign: 'left'
+                            }}>
+                              <strong style={{ color: '#fff' }}>Actifs clés :</strong> {products[activeProductIndex % products.length].ingredients}
+                            </div>
+                          )}
+
+                          <button 
+                            className="btn-primary-clean"
+                            style={{ width: '100%', padding: '0.9rem', fontSize: '0.95rem', fontWeight: '700' }}
+                            onClick={() => alert(`Le produit ${products[activeProductIndex % products.length].name} a été ajouté à la fiche de recommandation patient.`)}
+                          >
+                            Recommander au patient
+                          </button>
+                        </div>
+
+                        <button 
+                          className="carousel-arrow" 
+                          onClick={() => setActiveProductIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1))}
+                          style={{
+                            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                            color: '#fff', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer',
+                            fontSize: '1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                          }}
+                          title="Produit suivant"
+                        >
+                          ›
+                        </button>
+                      </div>
+
+                      {products.length > 1 && (
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                          {products.map((_, idx) => (
+                            <span 
+                              key={idx}
+                              onClick={() => setActiveProductIndex(idx)}
+                              style={{
+                                width: idx === (activeProductIndex % products.length) ? '24px' : '8px',
+                                height: '8px', borderRadius: '4px',
+                                background: idx === (activeProductIndex % products.length) ? '#ffffff' : 'rgba(255,255,255,0.3)',
+                                cursor: 'pointer', transition: 'all 0.3s'
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="empty-box-clean">Aucun produit disponible dans le catalogue.</div>
+                  )}
+                </div>
+              )}
             </div>
           ) : null}
         </div>
@@ -785,10 +991,26 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                 </div>
               </div>
             </div>
-            <button className="btn-primary-clean">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-              Modifier
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button 
+                className="btn-secondary-clean" 
+                onClick={() => {
+                  const updatedPatients = patients.map(p => p.id === selectedPatient.id ? { ...p, hasSeenTuto: false } : p);
+                  setPatients(updatedPatients);
+                  setSelectedPatient({ ...selectedPatient, hasSeenTuto: false });
+                  localStorage.setItem('dermaNovaPatients', JSON.stringify(updatedPatients));
+                  alert("Tutoriel réinitialisé ! Rouvre le portail patient pour voir l'écran d'accueil.");
+                }}
+                style={{ padding: '0.6rem 1rem', fontSize: '0.9rem' }}
+                title="Pour tests utilisateurs"
+              >
+                Reset Tuto
+              </button>
+              <button className="btn-primary-clean">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                Modifier
+              </button>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
@@ -980,10 +1202,26 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 Accéder au dossier médical
               </button>
-              <button className="btn-secondary-clean" onClick={() => window.open(`/?portal=true&patientId=${selectedPatient.id}`, '_blank')}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Ouvrir Portail Patient
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button className="btn-secondary-clean" style={{ flex: 1 }} onClick={() => window.open(`/?portal=true&patientId=${selectedPatient.id}`, '_blank')}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  Ouvrir Portail Patient
+                </button>
+                <button
+                  className="btn-secondary-clean"
+                  style={{ whiteSpace: 'nowrap', opacity: 0.7 }}
+                  title="Réinitialise l'écran de bienvenue pour ce patient"
+                  onClick={() => {
+                    const updatedPatients = patients.map(p => p.id === selectedPatient.id ? { ...p, hasSeenTuto: false } : p);
+                    setPatients(updatedPatients);
+                    setSelectedPatient({ ...selectedPatient, hasSeenTuto: false });
+                    localStorage.setItem('dermaNovaPatients', JSON.stringify(updatedPatients));
+                    alert("Tutoriel réinitialisé ! Rouvre le portail patient pour voir l'écran d'accueil.");
+                  }}
+                >
+                  ↺ Reset Tuto
+                </button>
+              </div>
               <div className="link-copy-row">
                 <span>Lien direct patient</span>
                 <button className="btn-copy-clean">
@@ -1073,14 +1311,54 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
   };
 
   const renderPatientPortal = () => {
-    const activePatient = selectedPatient || (patients.length > 0 ? patients[0] : { id: 1, name: 'Patient' });
+    const activePatient = selectedPatient || (patients.length > 0 ? patients[0] : { id: 1, name: 'Patient' }); console.log('PORTAL RENDER', activePatient);
+    
+    if (!activePatient.hasSeenTuto) {
+      return (
+        <div className="patient-portal-fullscreen animate-fade-in" style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
+          backgroundImage: 'url(/bgd.png)', backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 3000, overflowY: 'auto',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem'
+        }}>
+          <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'space-between' }}>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '3rem' }}>
+              <div className="tuto-logo-wrapper">
+                <img src={logo} alt="DermaNova Logo" className="tuto-logo" />
+              </div>
+              <p style={{ fontSize: '1.05rem', textAlign: 'center', color: '#fff', fontWeight: '500', lineHeight: '1.6', padding: '0 1rem', marginTop: '1.5rem' }}>
+                Bienvenue dans <strong>DermaNova</strong>,<br/>votre assistant <strong>dermatologique</strong> &amp; d'analyse du <strong>vieillissement cutané</strong>.
+              </p>
+            </div>
+
+            <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', width: '100%', padding: '1rem 0 0 0' }}>
+              <img src="/duo-cropped.png" alt="DermaNova Duo" style={{ width: '100%', maxWidth: '340px', objectFit: 'contain', maxHeight: '45vh', display: 'block', marginBottom: '-5px' }} />
+            </div>
+
+            <button 
+              className="btn-primary-clean" 
+              style={{ width: '100%', padding: '1.2rem', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '2rem', background: '#ffffff', color: '#6b6b7b', borderRadius: '20px', border: 'none', marginTop: '-110px', position: 'relative', zIndex: 11 }}
+              onClick={() => {
+                const updatedPatients = patients.map(p => p.id === activePatient.id ? { ...p, hasSeenTuto: true } : p);
+                setPatients(updatedPatients);
+                if (selectedPatient && selectedPatient.id === activePatient.id) {
+                  setSelectedPatient({ ...selectedPatient, hasSeenTuto: true });
+                }
+              }}
+            >
+              CONTINUER
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="patient-portal-fullscreen animate-fade-in" style={{
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
-        backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 3000, overflowY: 'auto',
+        backgroundImage: 'url(/bgd.png)', backgroundSize: 'cover', backgroundPosition: 'center', zIndex: 3000, overflowY: 'auto',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '1rem 0'
       }}>
-        <div className="dashboard-overlay"></div>
         <div style={{position: 'relative', zIndex: 10, width: '100%', maxWidth: '480px', padding: '0 1rem', paddingTop: '1rem'}}>
           {renderScannerCard()}
         </div>
@@ -1088,6 +1366,111 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
     );
   };
 
+
+  const renderProducts = () => {
+    const categories = ['Tous', 'Vieillissement cutané', 'Hydratation', 'Érythème', 'Acné'];
+    const filteredProducts = products.filter(p => {
+      const matchesCategory = productFilter === 'Tous' || (p.problem && p.problem.toLowerCase().includes(productFilter.toLowerCase()));
+      const matchesSearch = (p.name && p.name.toLowerCase().includes(productSearch.toLowerCase())) || (p.brand && p.brand.toLowerCase().includes(productSearch.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    });
+
+    return (
+      <div className="content-card animate-fade-in">
+        <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h2>CATALOGUE <span className="brand-light">PRODUITS & DERMO-COSMÉTIQUES</span></h2>
+            <p className="card-description" style={{ marginBottom: 0 }}>
+              Gérez les traitements cosmétiques et crèmes recommandées selon les problématiques des patients.
+            </p>
+          </div>
+          <button className="btn-primary-clean" onClick={() => setIsNewProductModalOpen(true)} style={{ padding: '0.7rem 1.4rem' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{marginRight: '8px'}}><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Ajouter un produit
+          </button>
+        </div>
+
+        <div className="products-filter-bar" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', margin: '1rem 0' }}>
+          <div className="search-wrapper" style={{ flex: 1, minWidth: '240px' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              placeholder="Rechercher un produit ou une marque..." 
+              value={productSearch}
+              onChange={e => setProductSearch(e.target.value)}
+              className="patient-search-input-clean"
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                className={`result-tab ${productFilter === cat ? 'active' : ''}`}
+                onClick={() => setProductFilter(cat)}
+                style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
+          {filteredProducts.map(prod => (
+            <div key={prod.id} className="product-item-card glass-panel animate-fade-in" style={{
+              display: 'flex', flexDirection: 'column', borderRadius: '20px', overflow: 'hidden',
+              border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.03)', padding: '1.2rem', position: 'relative'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
+                <span style={{
+                  background: 'rgba(76, 201, 240, 0.15)', color: 'var(--accent-cyan)', padding: '0.3rem 0.8rem',
+                  borderRadius: '12px', fontSize: '0.75rem', fontWeight: '600', border: '1px solid rgba(76, 201, 240, 0.3)'
+                }}>
+                  {prod.problem || "Vieillissement cutané"}
+                </span>
+                <button 
+                  onClick={() => {
+                    if (window.confirm(`Voulez-vous supprimer ${prod.name} du catalogue ?`)) {
+                      setProducts(products.filter(p => p.id !== prod.id));
+                    }
+                  }}
+                  style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '1rem' }}
+                  title="Supprimer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', height: '180px', width: '100%' }}>
+                <img src={prod.image} alt={prod.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', borderRadius: '12px' }} />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <h3 style={{ margin: '0 0 0.2rem 0', color: '#fff', fontSize: '1.1rem' }}>{prod.name}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{prod.brand}</span>
+                  <span style={{ color: '#fff', fontWeight: '700', fontSize: '1rem' }}>{prod.price}</span>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: '#d0d0d0', lineHeight: '1.4', margin: '0 0 0.8rem 0', flex: 1 }}>
+                  {prod.description}
+                </p>
+                {prod.ingredients && (
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.6rem' }}>
+                    <strong style={{ color: '#fff' }}>Actifs :</strong> {prod.ingredients}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {filteredProducts.length === 0 && (
+            <div className="empty-box-clean" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center' }}>
+              Aucun produit trouvé.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   const renderPdfKnowledge = () => (
     <div className="content-card animate-fade-in">
@@ -1256,6 +1639,11 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             title="Nouveau(elle) patient(e)"
           ></div>
           <div 
+            className={`mobile-nav-item ${activeTab === 'products' ? 'active' : ''}`}
+            onClick={() => setActiveTab('products')}
+            title="Produits"
+          ></div>
+          <div 
             className={`mobile-nav-item ${activeTab === 'pdf_knowledge' ? 'active' : ''}`}
             onClick={() => setActiveTab('pdf_knowledge')}
           ></div>
@@ -1277,6 +1665,12 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
             {activeTab === 'patients' && (
               <div className="layout-single">
                 {renderPatientsList()}
+              </div>
+            )}
+
+            {activeTab === 'products' && (
+              <div className="layout-single">
+                {renderProducts()}
               </div>
             )}
 
@@ -1425,6 +1819,90 @@ TRÈS IMPORTANT: NE METS AUCUN RETOUR À LA LIGNE (\n) NI CARACTÈRE DE CONTRÔL
                 </form>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {/* Modal Nouveau Produit Praticien */}
+      {isNewProductModalOpen && (
+        <div className="modal-overlay animate-fade-in">
+          <div className="modal-content unified-modal-clean" style={{ maxWidth: '520px' }}>
+            <h3 style={{ margin: '0 0 1rem 0', color: '#fff', textAlign: 'center' }}>Ajouter un nouveau produit</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (!newProductData.name || !newProductData.brand) return;
+              const newProd = {
+                id: Date.now(),
+                name: newProductData.name,
+                brand: newProductData.brand,
+                price: newProductData.price ? `${newProductData.price} €` : 'Prix sur demande',
+                problem: newProductData.problem,
+                description: newProductData.description || 'Soin dermo-cosmétique ciblé.',
+                ingredients: newProductData.ingredients || '',
+                image: newProductData.image || prod1Img
+              };
+              setProducts([newProd, ...products]);
+              setIsNewProductModalOpen(false);
+              setNewProductData({ name: '', brand: '', price: '', problem: 'Vieillissement cutané', description: '', ingredients: '', image: '' });
+              alert('Produit ajouté au catalogue avec succès !');
+            }} className="modal-form">
+              <input 
+                type="text" 
+                placeholder="Nom du produit (ex: Crème Lift Rétinol)" 
+                value={newProductData.name}
+                onChange={e => setNewProductData({...newProductData, name: e.target.value})}
+                required
+                autoFocus
+              />
+              <input 
+                type="text" 
+                placeholder="Marque / Laboratoire (ex: L'Oréal Paris)" 
+                value={newProductData.brand}
+                onChange={e => setNewProductData({...newProductData, brand: e.target.value})}
+                required
+              />
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="Prix (€)" 
+                  value={newProductData.price}
+                  onChange={e => setNewProductData({...newProductData, price: e.target.value})}
+                  style={{ flex: 1 }}
+                />
+                <select 
+                  className="modal-select" 
+                  value={newProductData.problem}
+                  onChange={e => setNewProductData({...newProductData, problem: e.target.value})}
+                  style={{ flex: 1.5 }}
+                >
+                  <option value="Vieillissement cutané">Vieillissement cutané</option>
+                  <option value="Hydratation & Barrière">Hydratation & Barrière</option>
+                  <option value="Érythème & Sensibilité">Érythème & Sensibilité</option>
+                  <option value="Acné & Imperfections">Acné & Imperfections</option>
+                </select>
+              </div>
+              <textarea 
+                placeholder="Description courte du produit et action dermo-cosmétique..."
+                value={newProductData.description}
+                onChange={e => setNewProductData({...newProductData, description: e.target.value})}
+                rows="3"
+                style={{
+                  background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
+                  color: '#fff', padding: '0.8rem 1rem', borderRadius: '12px', outline: 'none',
+                  fontSize: '0.95rem', fontFamily: 'inherit'
+                }}
+              />
+              <input 
+                type="text" 
+                placeholder="Ingrédients actifs clés (ex: Rétinol, Acide Hyaluronique...)" 
+                value={newProductData.ingredients}
+                onChange={e => setNewProductData({...newProductData, ingredients: e.target.value})}
+              />
+              <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
+                <button type="button" className="btn-cancel" onClick={() => setIsNewProductModalOpen(false)}>Annuler</button>
+                <button type="submit" className="btn-submit" style={{ flex: 1 }}>Ajouter le produit</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
